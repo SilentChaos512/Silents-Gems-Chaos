@@ -213,7 +213,6 @@ dependencies {
 }
 
 jar {
-    appendix = "${project.mc_version}"
     manifest {
         attributes(["Specification-Title"     : project.name,
                     "Specification-Vendor"    : "SilentChaos512",
