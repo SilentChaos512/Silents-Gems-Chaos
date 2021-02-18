@@ -12,6 +12,7 @@ buildscript {
 plugins {
     id 'maven'
     id 'maven-publish'
+    id "com.jfrog.bintray" version "1.8.5"
     id "com.matthewprenger.cursegradle" version "1.2.0"
 }
 
@@ -59,7 +60,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                silentgems {
+                silentgems_chaos {
                     source sourceSets.main
                 }
             }
@@ -75,7 +76,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                silentgems {
+                silentgems_chaos {
                     source sourceSets.main
                 }
             }
@@ -96,7 +97,7 @@ minecraft {
                     '--output', file('src/generated/resources/')
 
             mods {
-                silentgems {
+                silentgems_chaos {
                     source sourceSets.main
                 }
             }
@@ -106,6 +107,31 @@ minecraft {
 
 sourceSets.main.resources {
     srcDir 'src/generated/resources'
+}
+
+class Secrets {
+    def data = null
+
+    def getProperty(String key) {
+        return data ? data[key] : ''
+    }
+}
+
+
+import groovy.json.JsonSlurper
+
+def secretFile
+if (System.getenv().SECRET_FILE) {
+    secretFile = file System.getenv().SECRET_FILE
+} else {
+    secretFile = file 'secret.json'
+}
+
+project.ext.secret = new Secrets()
+if (secretFile.exists()) {
+    secretFile.withReader {
+        project.ext.secret.data = new JsonSlurper().parse it
+    }
 }
 
 repositories {
@@ -126,8 +152,8 @@ repositories {
         name = "TokenEnchanter"
         url = uri("https://maven.pkg.github.com/silentchaos512/token-enchanter")
         credentials {
-            username = property('gpr.username')
-            password = property('gpr.token')
+            username = secret.github_username ?: System.getenv('github_username')
+            password = secret.github_token ?: System.getenv('github_token')
         }
     }
     maven { // JEI
@@ -150,8 +176,11 @@ dependencies {
         exclude module: 'forge'
         exclude module: 'jei-1.16.3'
         exclude module: 'silent-lib-1.16.3'
+        exclude module: 'silent-gear-1.16.3'
+        exclude module: 'token-enchanter-1.16.3'
+        exclude module: 'curios-forge'
     }
-    compile fg.deobf("net.silentchaos512:silent-gear-${project.mc_version}:${project.sgear_version}") {
+    compile fg.deobf("net.silentchaos512:silent-gear-${project.sgear_version}") {
         exclude module: 'forge'
         exclude module: 'jei-1.16.3'
         exclude module: 'silent-lib-1.16.3'
@@ -223,31 +252,6 @@ artifacts {
     }
 }
 
-class Secrets {
-    def data = null
-
-    def getProperty(String key) {
-        return data ? data[key] : ''
-    }
-}
-
-
-import groovy.json.JsonSlurper
-
-def secretFile
-if (System.getenv().SECRET_FILE) {
-    secretFile = file System.getenv().SECRET_FILE
-} else {
-    secretFile = file 'secret.json'
-}
-
-project.ext.secret = new Secrets()
-if (secretFile.exists()) {
-    secretFile.withReader {
-        project.ext.secret.data = new JsonSlurper().parse it
-    }
-}
-
 curseforge {
     if (project.hasProperty('cf_project_id') && project.hasProperty('cf_release_type') && project.hasProperty('cf_changelog_filename') &&
             ((project.cf_release_type == 'alpha') || (project.cf_release_type == 'beta') || (project.cf_release_type == 'release'))) {
@@ -287,7 +291,6 @@ publishing {
     publications {
         gpr(MavenPublication) {
             from(components.java)
-            artifact apiJar
             artifact sourcesJar
             artifact javadocJar
         }

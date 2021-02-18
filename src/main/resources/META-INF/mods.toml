@@ -11,7 +11,7 @@ authors="SilentChaos512"
     modId="silentgems_chaos"
     version="${file.jarVersion}"
     displayName="Silent's Gems: Chaos"
-    updateJSONURL="https://raw.githubusercontent.com/SilentChaos512/SilentGemsChaos/1.16.x/update.json"
+    #updateJSONURL="https://raw.githubusercontent.com/SilentChaos512/SilentGemsChaos/1.16.x/update.json"
     description='''
     Downloads: https://www.curseforge.com/minecraft/mc-mods/silents-gems-chaos (I do not upload anywhere else)
     Changelog: https://github.com/SilentChaos512/SilentGemsChaos/blob/1.16.x/CHANGELOG.md

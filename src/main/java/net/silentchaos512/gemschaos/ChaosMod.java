@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.Random;
 
 @Mod(ChaosMod.MOD_ID)
-@Mod.EventBusSubscriber(modid = ChaosMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ChaosMod {
     public static final String MOD_ID = "silentgems_chaos";
 
