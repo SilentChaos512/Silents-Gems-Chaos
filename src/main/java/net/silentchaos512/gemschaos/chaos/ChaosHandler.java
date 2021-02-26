@@ -10,7 +10,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.gemschaos.api.ChaosApi;
-import net.silentchaos512.gemschaos.api.IChaosSource;
+import net.silentchaos512.gemschaos.api.chaos.IChaosSource;
+import net.silentchaos512.gemschaos.api.chaos.ChaosSourceCapability;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 

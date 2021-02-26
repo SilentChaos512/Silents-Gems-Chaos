@@ -1,15 +1,18 @@
 package net.silentchaos512.gemschaos.setup;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.item.Item;
+import net.minecraft.item.Rarity;
+import net.silentchaos512.gems.util.Gems;
 import net.silentchaos512.gemschaos.ChaosMod;
+import net.silentchaos512.gemschaos.item.ChaosGemItem;
 import net.silentchaos512.gemschaos.item.ChaosLinkerItem;
 import net.silentchaos512.gemschaos.item.ChaosOrbItem;
 import net.silentchaos512.gemschaos.item.ChaosXpCrystalItem;
 import net.silentchaos512.lib.registry.ItemRegistryObject;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class ChaosItems {
@@ -33,6 +36,11 @@ public final class ChaosItems {
     public static final ItemRegistryObject<ChaosXpCrystalItem> CHAOS_XP_CRYSTAL = registerSimpleModel("chaos_xp_crystal", () ->
             new ChaosXpCrystalItem(unstackableProps()));
 
+    private static final Map<Gems, ItemRegistryObject<ChaosGemItem>> CHAOS_GEMS = registerGemSetItem(
+            gem -> "chaos_" + gem.getName(),
+            gem -> new ChaosGemItem(gem, unstackableProps().rarity(Rarity.RARE))
+    );
+
     private ChaosItems() {}
 
     public static void register() {}
@@ -55,6 +63,14 @@ public final class ChaosItems {
         // Registers a generic, basic item with no special properties. Useful for items that are
         // used primarily for crafting recipes.
         return registerSimpleModel(name, () -> new Item(baseProps()));
+    }
+
+    private static <T extends Item> Map<Gems, ItemRegistryObject<T>> registerGemSetItem(Function<Gems, String> nameFactory, Function<Gems, T> itemFactory) {
+        Map<Gems, ItemRegistryObject<T>> map = new EnumMap<>(Gems.class);
+        for (Gems gem : Gems.values()) {
+            map.put(gem, register(nameFactory.apply(gem), () -> itemFactory.apply(gem)));
+        }
+        return ImmutableMap.copyOf(map);
     }
 
     private static Item.Properties baseProps() {

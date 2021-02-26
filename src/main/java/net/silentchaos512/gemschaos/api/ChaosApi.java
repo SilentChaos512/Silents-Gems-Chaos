@@ -6,7 +6,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import net.silentchaos512.gemschaos.chaos.ChaosSourceCapability;
+import net.silentchaos512.gemschaos.api.chaos.ChaosSourceCapability;
+import net.silentchaos512.gemschaos.api.chaos.IChaosSource;
 import net.silentchaos512.gemschaos.item.ChaosOrbItem;
 import net.silentchaos512.lib.util.TimeUtils;
 

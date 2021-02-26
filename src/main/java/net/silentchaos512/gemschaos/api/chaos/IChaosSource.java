@@ -1,4 +1,4 @@
-package net.silentchaos512.gemschaos.api;
+package net.silentchaos512.gemschaos.api.chaos;
 
 public interface IChaosSource {
     int getChaos();

@@ -1,4 +1,4 @@
-package net.silentchaos512.gemschaos.chaos;
+package net.silentchaos512.gemschaos.api.chaos;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -10,7 +10,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.silentchaos512.gemschaos.ChaosMod;
-import net.silentchaos512.gemschaos.api.IChaosSource;
 import net.silentchaos512.gemschaos.config.ChaosConfig;
 
 import javax.annotation.Nonnull;

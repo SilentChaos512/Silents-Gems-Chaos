@@ -1,6 +1,7 @@
-package net.silentchaos512.gemschaos.api;
+package net.silentchaos512.gemschaos.api.chaos;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.silentchaos512.gemschaos.api.ChaosApi;
 import net.silentchaos512.utils.MathUtils;
 
 import java.util.function.BiFunction;
