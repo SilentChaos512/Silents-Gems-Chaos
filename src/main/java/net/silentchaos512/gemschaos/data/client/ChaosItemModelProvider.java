@@ -8,6 +8,7 @@ import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.fml.RegistryObject;
+import net.silentchaos512.gems.util.Gems;
 import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.gemschaos.item.ChaosOrbItem;
 import net.silentchaos512.gemschaos.setup.ChaosItems;
@@ -34,6 +35,10 @@ public class ChaosItemModelProvider extends ItemModelProvider {
         chaosOrb(ChaosItems.FRAGILE_CHAOS_ORB.get(), "crack2", "crack4");
         chaosOrb(ChaosItems.REFINED_CHAOS_ORB.get(), "crack1", "crack2", "crack3", "crack4");
         chaosOrb(ChaosItems.PERFECT_CHAOS_ORB.get(), "crack1", "crack2", "crack3", "crack4");
+
+        for (Gems gem : Gems.values()) {
+            builder(ChaosItems.CHAOS_GEMS.get(gem).get(), itemGenerated);
+        }
     }
 
     private void blockBuilder(IBlockProvider block) {

@@ -1,0 +1,22 @@
+{
+  "type": "silentgems_chaos:potion",
+  "maxLevel": 2,
+  "displayName": {
+    "translate": "effect.minecraft.resistance"
+  },
+  "slots": [
+    8,
+    12
+  ],
+  "cost": {
+    "inactive": 10,
+    "active": [
+      80,
+      150
+    ],
+    "conditions": [
+      "hurt"
+    ]
+  },
+  "effect": "minecraft:resistance"
+}

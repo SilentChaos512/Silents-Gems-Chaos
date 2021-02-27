@@ -3,6 +3,8 @@ package net.silentchaos512.gemschaos;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
@@ -10,8 +12,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.silentchaos512.gems.util.Gems;
 import net.silentchaos512.gems.util.TextUtil;
-import net.silentchaos512.gemschaos.api.pedestal.PedestalItemCapability;
 import net.silentchaos512.gemschaos.api.chaos.ChaosSourceCapability;
+import net.silentchaos512.gemschaos.api.pedestal.PedestalItemCapability;
 import net.silentchaos512.gemschaos.chaosbuff.ChaosBuffManager;
 import net.silentchaos512.gemschaos.config.ChaosConfig;
 import net.silentchaos512.gemschaos.network.ChaosNetwork;
@@ -38,6 +40,8 @@ public class ChaosMod {
         ChaosRegistration.register();
         ChaosNetwork.init();
 
+        MinecraftForge.EVENT_BUS.addListener(ChaosMod::addReloadListeners);
+
         Greetings.addMessage(ChaosBuffManager::getGreetingErrorMessage);
     }
 
@@ -45,6 +49,10 @@ public class ChaosMod {
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         ChaosSourceCapability.register();
         PedestalItemCapability.register();
+    }
+
+    private static void addReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(ChaosBuffManager.INSTANCE);
     }
 
     public static String getVersion() {

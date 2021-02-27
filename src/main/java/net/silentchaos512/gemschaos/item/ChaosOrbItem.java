@@ -14,7 +14,6 @@ import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.silentchaos512.gemschaos.ChaosMod;
@@ -140,6 +139,6 @@ public class ChaosOrbItem extends Item {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(new TranslationTextComponent("item.silentgems.chaos_orb.leakage", (int) (100 * this.leakage)));
+        tooltip.add(ChaosMod.TEXT.translate("item", "chaos_orb.leakage", (int) (100 * this.leakage)));
     }
 }

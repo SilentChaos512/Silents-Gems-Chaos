@@ -1,0 +1,20 @@
+{
+  "type": "silentgems_chaos:potion",
+  "maxLevel": 1,
+  "displayName": {
+    "translate": "effect.minecraft.dolphins_grace"
+  },
+  "slots": [
+    5
+  ],
+  "cost": {
+    "inactive": 5,
+    "active": [
+      100
+    ],
+    "conditions": [
+      "underwater"
+    ]
+  },
+  "effect": "minecraft:dolphins_grace"
+}

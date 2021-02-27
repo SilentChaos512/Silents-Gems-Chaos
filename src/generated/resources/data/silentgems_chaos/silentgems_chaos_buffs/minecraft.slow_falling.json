@@ -1,0 +1,20 @@
+{
+  "type": "silentgems_chaos:potion",
+  "maxLevel": 1,
+  "displayName": {
+    "translate": "effect.minecraft.slow_falling"
+  },
+  "slots": [
+    5
+  ],
+  "cost": {
+    "inactive": 0,
+    "active": [
+      100
+    ],
+    "conditions": [
+      "in_air"
+    ]
+  },
+  "effect": "minecraft:slow_falling"
+}

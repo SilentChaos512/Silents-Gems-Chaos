@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class PotionChaosBuff extends SimpleChaosBuff {
     private static final ResourceLocation SERIALIZER_ID = ChaosMod.getId("potion");
-    static final IChaosBuffSerializer<PotionChaosBuff> SERIALIZER = new Serializer<>(
+    public static final IChaosBuffSerializer<PotionChaosBuff> SERIALIZER = new Serializer<>(
             SERIALIZER_ID,
             PotionChaosBuff::new,
             (buff, json) -> {

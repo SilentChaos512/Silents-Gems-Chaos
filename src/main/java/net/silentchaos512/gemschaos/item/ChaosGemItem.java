@@ -15,14 +15,13 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.silentchaos512.gems.util.Gems;
 import net.silentchaos512.gems.util.IGem;
-import net.silentchaos512.gems.util.TextUtil;
+import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.gemschaos.api.ChaosApi;
 import net.silentchaos512.gemschaos.api.WorldPos;
 import net.silentchaos512.gemschaos.api.chaos.ChaosEmissionRate;
@@ -275,14 +274,14 @@ public class ChaosGemItem extends Item implements IGem {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         getBuffs(stack).forEach((buff, level) -> tooltip.add(buff.getDisplayName(level)));
-        tooltip.add(new TranslationTextComponent("slots", getSlotsUsed(stack), MAX_SLOTS));
+        tooltip.add(ChaosMod.TEXT.translate("item", "chaos_gem.slots", getSlotsUsed(stack), MAX_SLOTS));
         tooltip.add(chaosGenTooltip("chaos", getChaosGenerated(stack, Minecraft.getInstance().player)));
         tooltip.add(chaosGenTooltip("chaosMax", getMaxChaosGenerated(stack)));
     }
 
-    private ITextComponent chaosGenTooltip(String key, int chaos) {
+    private static ITextComponent chaosGenTooltip(String key, int chaos) {
         ChaosEmissionRate emissionRate = ChaosEmissionRate.fromAmount(chaos);
-        return TextUtil.itemSub(this, key, emissionRate.getDisplayName(chaos));
+        return ChaosMod.TEXT.translate("item", "chaos_gem." + key, emissionRate.getDisplayName(chaos));
     }
 
     @Override
@@ -292,7 +291,7 @@ public class ChaosGemItem extends Item implements IGem {
 
     @Override
     public ITextComponent getName() {
-        return new TranslationTextComponent(this.getTranslationKey(), this.gem.getDisplayName());
+        return ChaosMod.TEXT.translate("item", "chaos_gem", this.gem.getDisplayName());
     }
 
     @Override

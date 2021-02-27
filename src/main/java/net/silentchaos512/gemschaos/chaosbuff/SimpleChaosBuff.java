@@ -72,7 +72,7 @@ public class SimpleChaosBuff implements IChaosBuff {
     @Override
     public boolean isActive(PlayerEntity player) {
         for (CostConditions c : costConditions) {
-            if (c != null && !c.appliesTo(player)) {
+            if (c != null && !c.test(player)) {
                 return false;
             }
         }

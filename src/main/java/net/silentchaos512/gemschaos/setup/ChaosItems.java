@@ -36,7 +36,7 @@ public final class ChaosItems {
     public static final ItemRegistryObject<ChaosXpCrystalItem> CHAOS_XP_CRYSTAL = registerSimpleModel("chaos_xp_crystal", () ->
             new ChaosXpCrystalItem(unstackableProps()));
 
-    private static final Map<Gems, ItemRegistryObject<ChaosGemItem>> CHAOS_GEMS = registerGemSetItem(
+    public static final Map<Gems, ItemRegistryObject<ChaosGemItem>> CHAOS_GEMS = registerGemSetItem(
             gem -> "chaos_" + gem.getName(),
             gem -> new ChaosGemItem(gem, unstackableProps().rarity(Rarity.RARE))
     );

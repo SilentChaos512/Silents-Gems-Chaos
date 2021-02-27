@@ -1,0 +1,19 @@
+{
+  "type": "silentgems_chaos:potion",
+  "maxLevel": 1,
+  "displayName": {
+    "translate": "effect.minecraft.invisibility"
+  },
+  "slots": [
+    6
+  ],
+  "cost": {
+    "inactive": 0,
+    "active": [
+      80
+    ],
+    "conditions": []
+  },
+  "effect": "minecraft:invisibility",
+  "effectDuration": 410
+}

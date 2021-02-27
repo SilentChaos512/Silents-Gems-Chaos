@@ -1,0 +1,20 @@
+{
+  "type": "silentgems_chaos:potion",
+  "maxLevel": 2,
+  "displayName": {
+    "translate": "effect.minecraft.strength"
+  },
+  "slots": [
+    10,
+    12
+  ],
+  "cost": {
+    "inactive": 2,
+    "active": [
+      150,
+      250
+    ],
+    "conditions": []
+  },
+  "effect": "minecraft:strength"
+}

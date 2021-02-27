@@ -6,6 +6,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.silentchaos512.gemschaos.ChaosMod;
+import net.silentchaos512.gemschaos.data.chaosbuff.ChaosBuffsProvider;
 import net.silentchaos512.gemschaos.data.client.ChaosBlockStateProvider;
 import net.silentchaos512.gemschaos.data.client.ChaosItemModelProvider;
 import net.silentchaos512.gemschaos.data.recipe.ChaosRecipeProvider;
@@ -28,6 +29,8 @@ public final class DataGenerators {
 
         gen.addProvider(new ChaosTraitsProvider(gen));
         gen.addProvider(new ChaosMaterialsProvider(gen));
+
+        gen.addProvider(new ChaosBuffsProvider(gen, ChaosMod.MOD_ID));
 
         gen.addProvider(new ChaosBlockStateProvider(gen, existingFileHelper));
         gen.addProvider(new ChaosItemModelProvider(gen, existingFileHelper));

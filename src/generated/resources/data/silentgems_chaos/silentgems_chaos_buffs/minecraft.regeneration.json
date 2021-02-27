@@ -1,0 +1,22 @@
+{
+  "type": "silentgems_chaos:potion",
+  "maxLevel": 2,
+  "displayName": {
+    "translate": "effect.minecraft.regeneration"
+  },
+  "slots": [
+    8,
+    12
+  ],
+  "cost": {
+    "inactive": 25,
+    "active": [
+      100,
+      200
+    ],
+    "conditions": [
+      "hurt"
+    ]
+  },
+  "effect": "minecraft:regeneration"
+}

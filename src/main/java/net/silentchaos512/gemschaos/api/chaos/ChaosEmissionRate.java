@@ -2,7 +2,7 @@ package net.silentchaos512.gemschaos.api.chaos;
 
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.silentchaos512.gemschaos.ChaosMod;
 
 import java.util.Locale;
 
@@ -32,7 +32,7 @@ public enum ChaosEmissionRate {
 
     public IFormattableTextComponent getDisplayName() {
         String name = name().toLowerCase(Locale.ROOT);
-        return new TranslationTextComponent("chaos.silentgems.emissionRate." + name);
+        return translate("emissionRate." + name);
     }
 
     public IFormattableTextComponent getDisplayName(int chaos) {
@@ -44,11 +44,11 @@ public enum ChaosEmissionRate {
         int diff = this.maxValue - previous.maxValue;
 
         if (chaos > (previous.maxValue + 2 * diff / 3)) {
-            ITextComponent text = new TranslationTextComponent("chaos.silentgems.emissionRate.plus2");
+            ITextComponent text = translate("emissionRate.plus2");
             return getDisplayName().append(text);
         }
         if (chaos > (previous.maxValue + diff / 3)) {
-            ITextComponent text = new TranslationTextComponent("chaos.silentgems.emissionRate.plus1");
+            ITextComponent text = translate("emissionRate.plus1");
             return getDisplayName().append(text);
         }
 
@@ -56,10 +56,14 @@ public enum ChaosEmissionRate {
     }
 
     public ITextComponent getEmissionText() {
-        return new TranslationTextComponent("chaos.silentgems.emission", getDisplayName());
+        return translate("emission", getDisplayName());
     }
 
     public ITextComponent getEmissionText(int chaos) {
-        return new TranslationTextComponent("chaos.silentgems.emission", getDisplayName(chaos));
+        return translate("emission", getDisplayName(chaos));
+    }
+
+    private static IFormattableTextComponent translate(String key, Object... params) {
+        return ChaosMod.TEXT.translate("chaos", key, params);
     }
 }

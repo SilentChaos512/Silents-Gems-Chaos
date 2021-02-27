@@ -4,9 +4,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 
 import javax.annotation.Nullable;
+import java.util.Locale;
 import java.util.function.Predicate;
 
-public enum CostConditions {
+public enum CostConditions implements ICostCondition {
     NO_CONDITION(p -> true),
     BURNING(Entity::isBurning),
 //    FREEZING(p -> p.getActivePotionEffect(GemsEffects.FREEZING.get()) != null),
@@ -23,8 +24,14 @@ public enum CostConditions {
         this.condition = condition;
     }
 
-    public boolean appliesTo(PlayerEntity player) {
+    @Override
+    public boolean test(PlayerEntity player) {
         return this.condition.test(player);
+    }
+
+    @Override
+    public String getName() {
+        return name().toLowerCase(Locale.ROOT);
     }
 
     @Nullable
