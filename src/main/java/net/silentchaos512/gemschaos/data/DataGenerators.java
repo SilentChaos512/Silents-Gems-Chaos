@@ -9,6 +9,8 @@ import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.gemschaos.data.chaosbuff.ChaosBuffsProvider;
 import net.silentchaos512.gemschaos.data.client.ChaosBlockStateProvider;
 import net.silentchaos512.gemschaos.data.client.ChaosItemModelProvider;
+import net.silentchaos512.gemschaos.data.gear.ChaosMaterialsProvider;
+import net.silentchaos512.gemschaos.data.gear.ChaosTraitsProvider;
 import net.silentchaos512.gemschaos.data.recipe.ChaosRecipeProvider;
 
 @Mod.EventBusSubscriber(modid = ChaosMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)

@@ -5,10 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Rarity;
 import net.silentchaos512.gems.util.Gems;
 import net.silentchaos512.gemschaos.ChaosMod;
-import net.silentchaos512.gemschaos.item.ChaosGemItem;
-import net.silentchaos512.gemschaos.item.ChaosLinkerItem;
-import net.silentchaos512.gemschaos.item.ChaosOrbItem;
-import net.silentchaos512.gemschaos.item.ChaosXpCrystalItem;
+import net.silentchaos512.gemschaos.item.*;
 import net.silentchaos512.lib.registry.ItemRegistryObject;
 
 import java.util.*;
@@ -20,6 +17,7 @@ public final class ChaosItems {
 
     public static final ItemRegistryObject<Item> CHAOS_CRYSTAL = registerCraftingItem("chaos_crystal");
     public static final ItemRegistryObject<Item> CHAOS_LINKER_CORE = registerCraftingItem("chaos_linker_core");
+    public static final ItemRegistryObject<Item> RUNE_SLATE = registerCraftingItem("rune_slate");
 
     public static final ItemRegistryObject<ChaosLinkerItem> CHAOS_LINKER = registerSimpleModel("chaos_linker", () ->
             new ChaosLinkerItem(unstackableProps()));
@@ -40,6 +38,9 @@ public final class ChaosItems {
             gem -> "chaos_" + gem.getName(),
             gem -> new ChaosGemItem(gem, unstackableProps().rarity(Rarity.RARE))
     );
+
+    public static final ItemRegistryObject<ChaosRuneItem> CHAOS_RUNE = register("chaos_rune", () ->
+            new ChaosRuneItem(baseProps()));
 
     private ChaosItems() {}
 

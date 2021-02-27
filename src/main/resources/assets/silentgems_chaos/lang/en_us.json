@@ -31,5 +31,13 @@
   "item.silentgems_chaos.perfect_chaos_orb": "Perfect Chaos Orb",
   "item.silentgems_chaos.refined_chaos_orb": "Refined Chaos Orb",
   "itemGroup.silentgems_chaos": "Silent's Gems: Chaos",
-  "misc.silentgems_chaos.chaos": "Chaos: %s"
+  "misc.silentgems_chaos_chaos.chaos": "Chaos: %s",
+  "item.silentgems_chaos.chaos_rune": "Chaos Rune",
+  "item.silentgems_chaos.chaos_rune.appliesEffect": "Applies the %s potion effect",
+  "item.silentgems_chaos.chaos_rune.chaos": "Chaos created (active): %d %s",
+  "item.silentgems_chaos.chaos_rune.desc": "Craft with a chaos gem",
+  "item.silentgems_chaos.chaos_rune.maxLevel": "Max level: %d",
+  "item.silentgems_chaos.chaos_rune.nameProper": "Chaos Rune: %s",
+  "item.silentgems_chaos.chaos_rune.slotsUsed": "Slots used: %d",
+  "item.silentgems_chaos.chaos_rune.variableCost": "(variable)"
 }

@@ -55,6 +55,7 @@ public class ChaosRegistration {
 
         ChaosBlocks.register();
         ChaosItems.register();
+        ChaosRecipes.register();
     }
 
     @SuppressWarnings("unchecked")

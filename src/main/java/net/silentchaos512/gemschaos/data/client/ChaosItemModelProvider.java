@@ -39,6 +39,11 @@ public class ChaosItemModelProvider extends ItemModelProvider {
         for (Gems gem : Gems.values()) {
             builder(ChaosItems.CHAOS_GEMS.get(gem).get(), itemGenerated);
         }
+
+        getBuilder("chaos_rune")
+                .parent(itemGenerated)
+                .texture("layer0", modLoc("item/chaos_rune_base"))
+                .texture("layer1", modLoc("item/chaos_rune_overlay"));
     }
 
     private void blockBuilder(IBlockProvider block) {

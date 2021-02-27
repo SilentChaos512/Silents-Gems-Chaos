@@ -1,4 +1,4 @@
-package net.silentchaos512.gemschaos.data;
+package net.silentchaos512.gemschaos.data.gear;
 
 import net.minecraft.data.DataGenerator;
 import net.silentchaos512.gear.data.material.MaterialBuilder;
