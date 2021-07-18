@@ -5,19 +5,18 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.+', changing: true
     }
 }
 
 plugins {
     id 'maven'
     id 'maven-publish'
-    id "com.jfrog.bintray" version "1.8.5"
-    id "com.matthewprenger.cursegradle" version "1.2.0"
+    id "com.matthewprenger.cursegradle" version "1.4.0"
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
+apply plugin: 'idea'
 
 repositories {
     flatDir {
@@ -40,7 +39,13 @@ javadoc {
 archivesBaseName = project.archivesBaseName
 def versionInfo = getModVersion()
 System.out.println(versionInfo)
+def version_short = "${versionInfo['version_short']}"
 version = "${versionInfo['version']}"
+
+def gpr_creds = { // Credentials for GitHub Packages, since this is used multiple times
+    username = property('gpr.username')
+    password = property('gpr.token')
+}
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -53,10 +58,6 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-//            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -69,10 +70,6 @@ minecraft {
         server {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -85,10 +82,6 @@ minecraft {
         data {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-//            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             args '--mod', project.mod_id, '--all',
@@ -109,58 +102,39 @@ sourceSets.main.resources {
     srcDir 'src/generated/resources'
 }
 
-class Secrets {
-    def data = null
-
-    def getProperty(String key) {
-        return data ? data[key] : ''
-    }
-}
-
-
-import groovy.json.JsonSlurper
-
-def secretFile
-if (System.getenv().SECRET_FILE) {
-    secretFile = file System.getenv().SECRET_FILE
-} else {
-    secretFile = file 'secret.json'
-}
-
-project.ext.secret = new Secrets()
-if (secretFile.exists()) {
-    secretFile.withReader {
-        project.ext.secret.data = new JsonSlurper().parse it
-    }
-}
-
 repositories {
     jcenter()
     mavenLocal()
     // Silent Lib
     maven {
-        url "https://dl.bintray.com/silentchaos512/silent-lib"
+        url = uri("https://maven.pkg.github.com/silentchaos512/silentlib")
+        credentials gpr_creds
     }
     maven {
-        url "https://dl.bintray.com/silentchaos512/silent-utils"
+        url = uri("https://maven.pkg.github.com/silentchaos512/silent-utils")
+        credentials gpr_creds
     }
     // Silent Gear
     maven {
-        url "https://dl.bintray.com/silentchaos512/silent-gear"
+        url = uri("https://maven.pkg.github.com/silentchaos512/silent-gear")
+        credentials gpr_creds
     }
+    // Silent's Gems: Base
     maven {
-        name = "TokenEnchanter"
-        url = uri("https://maven.pkg.github.com/silentchaos512/token-enchanter")
-        credentials {
-            username = secret.github_username ?: System.getenv('github_username')
-            password = secret.github_token ?: System.getenv('github_token')
-        }
+        url = uri("https://maven.pkg.github.com/silentchaos512/silentgems")
+        credentials gpr_creds
     }
-    maven { // JEI
+    // Token Enchanter
+    maven {
+        url = uri("https://maven.pkg.github.com/silentchaos512/token-enchanter")
+        credentials gpr_creds
+    }
+    // JEI
+    maven {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
     }
-    maven { // JEI
+    maven {
         name = "ModMaven"
         url = "https://modmaven.k-4u.nl"
     }
@@ -169,37 +143,34 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${project.forge_version}"
 
-    compile fg.deobf("net.silentchaos512:silent-lib-${project.sl_version}") {
+    compile fg.deobf("net.silentchaos512:silent-lib:${project.sl_version}") {
         exclude module: "forge"
     }
-    compile fg.deobf("net.silentchaos512:silents-gems-${project.sgems_version}") {
+    compile fg.deobf("net.silentchaos512:silents-gems-1.16.3:${project.sgems_version}") {
         exclude module: 'forge'
         exclude module: 'jei-1.16.3'
-        exclude module: 'silent-lib-1.16.3'
-        exclude module: 'silent-gear-1.16.3'
-        exclude module: 'token-enchanter-1.16.3'
+        exclude module: 'silent-lib'
+        exclude module: 'silent-gear'
+        exclude module: 'token-enchanter'
         exclude module: 'curios-forge'
     }
-    compile fg.deobf("net.silentchaos512:silent-gear-${project.sgear_version}") {
+    compile fg.deobf("net.silentchaos512:silent-gear:${project.sgear_version}") {
         exclude module: 'forge'
         exclude module: 'jei-1.16.3'
-        exclude module: 'silent-lib-1.16.3'
+        exclude module: 'silent-lib'
         exclude module: 'curios-forge'
-        exclude module: 'Bookshelf-1.16.3'
-        exclude module: 'GameStages-1.16.3'
-        exclude module: 'World-Stripper'
     }
 
     if (project.hasProperty('token_enchanter_version')) {
-        compileOnly fg.deobf("net.silentchaos512:token-enchanter-${project.token_enchanter_version}:api") {
+        compileOnly fg.deobf("net.silentchaos512:token-enchanter:${project.token_enchanter_version}:api") {
             exclude module: 'forge'
             exclude module: 'jei-1.16.3'
-            exclude module: 'silent-lib-1.16.3'
+            exclude module: 'silent-lib'
         }
-        runtimeOnly fg.deobf("net.silentchaos512:token-enchanter-${project.token_enchanter_version}") {
+        runtimeOnly fg.deobf("net.silentchaos512:token-enchanter:${project.token_enchanter_version}") {
             exclude module: 'forge'
             exclude module: 'jei-1.16.3'
-            exclude module: 'silent-lib-1.16.3'
+            exclude module: 'silent-lib'
         }
     }
 
@@ -216,17 +187,12 @@ jar {
     manifest {
         attributes(["Specification-Title"     : project.name,
                     "Specification-Vendor"    : "SilentChaos512",
-                    "Specification-Version"   : "${version}",
+                    "Specification-Version"   : "1",
                     "Implementation-Title"    : project.name,
-                    "Implementation-Version"  : "${version}",
                     "Implementation-Vendor"   : "SilentChaos512",
+                    "Implementation-Version"  : "${version}",
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
     }
-}
-
-task deobfJar(type: Jar) {
-    classifier = 'deobf'
-    from sourceSets.main.output
 }
 
 task sourcesJar(type: Jar) {
@@ -239,33 +205,34 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.getDestinationDir()
 }
 
+task apiJar(type: Jar) {
+    classifier = 'api'
+    include 'net/silentchaos512/gemschaos/api/**/*'
+    from sourceSets.main.allSource
+    from sourceSets.main.output
+}
+
 artifacts {
-    if (project.hasProperty('doDeobfJar')) {
-        archives deobfJar
-    }
-    if (project.hasProperty('doSourceJar')) {
-        archives sourcesJar
-    }
-    if (project.hasProperty('doJavadocJar')) {
-        archives javadocJar
-    }
+    archives javadocJar
+    archives sourcesJar
+    archives apiJar
 }
 
 curseforge {
     if (project.hasProperty('cf_project_id') && project.hasProperty('cf_release_type') && project.hasProperty('cf_changelog_filename') &&
             ((project.cf_release_type == 'alpha') || (project.cf_release_type == 'beta') || (project.cf_release_type == 'release'))) {
-        apiKey = secret.curseforgeAPIKey
+        apiKey = property('curseforge.apiKey')
         project {
             id = project.cf_project_id
             changelog = file(project.cf_changelog_filename)
             releaseType = project.cf_release_type
             addGameVersion(project.mc_version)
+            addGameVersion('1.16.3')
             addGameVersion('1.16.4')
-            addGameVersion('1.16.5')
             mainArtifact(jar) {
                 relations {
                     requiredDependency 'silent-lib'
-                    requiredDependency 'silents-gems'
+                    requiredDependency 'silents-gems-experimental'
                     optionalDependency 'silent-gear'
                     optionalDependency 'token-enchanter'
                 }
@@ -281,15 +248,13 @@ publishing {
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/silentchaos512/${project.repoName}")
-            credentials {
-                username = secret.github_username ?: System.getenv('github_username')
-                password = secret.github_token ?: System.getenv('github_token')
-            }
+            credentials gpr_creds
         }
     }
     publications {
         gpr(MavenPublication) {
             from(components.java)
+            artifact apiJar
             artifact sourcesJar
             artifact javadocJar
         }
@@ -386,6 +351,7 @@ build.finalizedBy incrementBuild // only increment on successful builds
 // Update JSON management
 
 import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 
 def writeUpdateJson() {
     def version = getModVersion()['version_short']
@@ -395,7 +361,7 @@ def writeUpdateJson() {
 
     // TODO: Maybe add something to create an abbreviated changelog? May not be useful...
     if (!json[project.mc_version].containsKey(version.toString()))
-        json[project.mc_version][version.toString()] = project.changelogUrl
+        json[project.mc_version][version.toString()] = 'https://github.com/SilentChaos512/Silent-Gear/blob/1.16.x/CHANGELOG.md'
     json[project.mc_version] = json[project.mc_version].sort([compare: { a, b -> b.compareTo(a) }] as Comparator)
     json['promos']["${project.mc_version}-latest"] = version
     json['promos']["${project.mc_version}-recommended"] = version
