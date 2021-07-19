@@ -48,6 +48,11 @@ public class ChaosLootTableProvider extends LootTableProvider {
                             .acceptFunction(ApplyBonus.uniformBonusCount(Enchantments.FORTUNE)))));
 
             registerDropSelfLootTable(ChaosBlocks.CHAOS_CRYSTAL_BLOCK.get());
+
+            registerLootTable(ChaosBlocks.CORRUPTED_STONE.get(), b ->
+                    droppingWithSilkTouchOrRandomly(b, ChaosItems.CORRUPTED_STONE_PILE, ConstantRange.of(4)));
+            registerLootTable(ChaosBlocks.CORRUPTED_DIRT.get(), b ->
+                    droppingWithSilkTouchOrRandomly(b, ChaosItems.CORRUPTED_DIRT_PILE, ConstantRange.of(4)));
         }
 
         @Override

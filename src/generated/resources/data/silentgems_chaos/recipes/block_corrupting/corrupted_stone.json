@@ -1,0 +1,8 @@
+{
+  "type": "silentgems_chaos:block_corrupting",
+  "chaosDissipated": 5000,
+  "ingredient": {
+    "tag": "forge:stone"
+  },
+  "result": "silentgems_chaos:corrupted_stone"
+}

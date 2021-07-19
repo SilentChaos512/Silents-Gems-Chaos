@@ -42,6 +42,9 @@ public final class ChaosBlocks {
                     .hardnessAndResistance(4, 30)
                     .sound(SoundType.METAL)));
 
+    public static final BlockRegistryObject<Block> CORRUPTED_STONE = registerSimple("corrupted_stone", ChaosBlocks::createCorruptedBlock);
+    public static final BlockRegistryObject<Block> CORRUPTED_DIRT = registerSimple("corrupted_dirt", ChaosBlocks::createCorruptedBlock);
+
     private ChaosBlocks() {}
 
     public static void register() {}
@@ -52,6 +55,13 @@ public final class ChaosBlocks {
 
     public static Collection<BlockRegistryObject<? extends Block>> getSimpleBlocks() {
         return Collections.unmodifiableCollection(SIMPLE_BLOCKS);
+    }
+
+    private static Block createCorruptedBlock() {
+        return new Block(AbstractBlock.Properties.create(Material.CLAY)
+                .hardnessAndResistance(1)
+                .sound(SoundType.GROUND)
+                .setLightLevel(state -> 7));
     }
 
     private static <T extends Block> BlockRegistryObject<T> registerNoItem(String name, Supplier<T> block) {

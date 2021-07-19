@@ -26,6 +26,7 @@ public class ChaosTags {
     }
 
     public static final class Items {
+        public static final ITag.INamedTag<Item> DIRT = forge("dirt");
         public static final ITag.INamedTag<Item> GEMS_CHAOS = mod("gems/chaos");
 
         private Items() {}

@@ -1,5 +1,6 @@
 package net.silentchaos512.gemschaos.data;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
@@ -18,5 +19,12 @@ public class ChaosItemTagsProvider extends ItemTagsProvider {
     @Override
     protected void registerTags() {
         getOrCreateBuilder(ChaosTags.Items.GEMS_CHAOS).add(ChaosItems.CHAOS_CRYSTAL.get());
+
+        getOrCreateBuilder(ChaosTags.Items.DIRT)
+                .add(Blocks.DIRT.asItem())
+                .add(Blocks.GRASS_BLOCK.asItem())
+                .add(Blocks.COARSE_DIRT.asItem())
+                .add(Blocks.PODZOL.asItem())
+                .add(Blocks.MYCELIUM.asItem());
     }
 }

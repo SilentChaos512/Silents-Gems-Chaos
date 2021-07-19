@@ -18,9 +18,14 @@ public final class ChaosItems {
     public static final ItemRegistryObject<Item> CHAOS_CRYSTAL = registerCraftingItem("chaos_crystal");
     public static final ItemRegistryObject<Item> CHAOS_LINKER_CORE = registerCraftingItem("chaos_linker_core");
     public static final ItemRegistryObject<Item> RUNE_SLATE = registerCraftingItem("rune_slate");
+    public static final ItemRegistryObject<Item> CORRUPTED_STONE_PILE = registerCraftingItem("corrupted_stone_pile");
+    public static final ItemRegistryObject<Item> CORRUPTED_DIRT_PILE = registerCraftingItem("corrupted_dirt_pile");
 
     public static final ItemRegistryObject<ChaosLinkerItem> CHAOS_LINKER = registerSimpleModel("chaos_linker", () ->
             new ChaosLinkerItem(unstackableProps()));
+
+    public static final ItemRegistryObject<ChaosFlintAndSteelItem> CHAOS_FLINT_AND_STEEL = registerSimpleModel("chaos_flint_and_steel", () ->
+            new ChaosFlintAndSteelItem(unstackableProps().maxDamage(8)));
 
     public static final ItemRegistryObject<ChaosOrbItem> CHAOS_POTATO = register("chaos_potato", () ->
             new ChaosOrbItem(0, 5000, 0.5f));
