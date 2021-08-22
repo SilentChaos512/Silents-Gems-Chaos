@@ -22,6 +22,8 @@ import net.silentchaos512.utils.Color;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 public final class ChaosRuneItem extends Item {
     private static final String NBT_KEY = "SGems_BuffRune";
 
@@ -54,40 +56,40 @@ public final class ChaosRuneItem extends Item {
     }
 
     @Override
-    public ITextComponent getDisplayName(ItemStack stack) {
+    public ITextComponent getName(ItemStack stack) {
         IChaosBuff buff = getBuff(stack);
         if (buff != null) {
             ITextComponent buffName = buff.getDisplayName(0);
-            return new TranslationTextComponent(this.getTranslationKey() + ".nameProper", buffName);
+            return new TranslationTextComponent(this.getDescriptionId() + ".nameProper", buffName);
         }
-        return super.getDisplayName(stack);
+        return super.getName(stack);
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         IChaosBuff buff = getBuff(stack);
         if (buff == null) return;
 
-        tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".maxLevel", buff.getMaxLevel()));
-        tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".slotsUsed", buff.getSlotsForLevel(1)));
+        tooltip.add(new TranslationTextComponent(this.getDescriptionId() + ".maxLevel", buff.getMaxLevel()));
+        tooltip.add(new TranslationTextComponent(this.getDescriptionId() + ".slotsUsed", buff.getSlotsForLevel(1)));
         int activeChaosGenerated = buff.getActiveChaosGenerated(1);
         ChaosEmissionRate emissionRate = ChaosEmissionRate.fromAmount(activeChaosGenerated);
-        tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".chaos", emissionRate.getDisplayName(activeChaosGenerated)));
+        tooltip.add(new TranslationTextComponent(this.getDescriptionId() + ".chaos", emissionRate.getDisplayName(activeChaosGenerated)));
 
         // Debug
         if (flagIn.isAdvanced()) {
-            tooltip.add(new StringTextComponent(String.format("Buff ID: %s", buff.getId())).mergeStyle(TextFormatting.DARK_GRAY));
-            tooltip.add(new StringTextComponent(String.format("Color: %X", buff.getRuneColor())).mergeStyle(TextFormatting.DARK_GRAY));
+            tooltip.add(new StringTextComponent(String.format("Buff ID: %s", buff.getId())).withStyle(TextFormatting.DARK_GRAY));
+            tooltip.add(new StringTextComponent(String.format("Color: %X", buff.getRuneColor())).withStyle(TextFormatting.DARK_GRAY));
             if (buff instanceof PotionChaosBuff) {
                 Effect effect = ((PotionChaosBuff) buff).getEffect();
-                tooltip.add(new StringTextComponent(String.format("Effect: %s", effect)).mergeStyle(TextFormatting.DARK_GRAY));
+                tooltip.add(new StringTextComponent(String.format("Effect: %s", effect)).withStyle(TextFormatting.DARK_GRAY));
             }
         }
     }
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        if (isInGroup(group)) {
+    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+        if (allowdedIn(group)) {
             for (IChaosBuff buff : ChaosBuffManager.getValues()) {
                 items.add(getStack(buff.getId()));
             }

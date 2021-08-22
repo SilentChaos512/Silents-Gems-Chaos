@@ -32,8 +32,8 @@ public final class ChaosHandler {
     @SubscribeEvent
     public static void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
         LivingEntity entity = event.getEntityLiving();
-        World world = entity.world;
-        if (world.isRemote) return;
+        World world = entity.level;
+        if (world.isClientSide) return;
 
         if (world.getGameTime() % 20 == 0) {
             entity.getCapability(ChaosSourceCapability.INSTANCE).ifPresent(source ->

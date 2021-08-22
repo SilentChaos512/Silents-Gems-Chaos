@@ -17,6 +17,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
+import net.minecraft.item.Item.Properties;
+
 public abstract class PlayerLinkedItem extends Item {
     private static final String NBT_PLAYER = "Player";
 
@@ -28,7 +30,7 @@ public abstract class PlayerLinkedItem extends Item {
     public static PlayerEntity getOwner(ItemStack stack, IEntityReader world) {
         UUID uuid = getOwnerUuid(stack);
         if (uuid != null) {
-            return world.getPlayerByUuid(uuid);
+            return world.getPlayerByUUID(uuid);
         }
         return null;
     }
@@ -36,17 +38,17 @@ public abstract class PlayerLinkedItem extends Item {
     @Nullable
     public static UUID getOwnerUuid(ItemStack stack) {
         if (stack.getOrCreateTag().contains(NBT_PLAYER)) {
-            return stack.getOrCreateTag().getUniqueId(NBT_PLAYER);
+            return stack.getOrCreateTag().getUUID(NBT_PLAYER);
         }
         return null;
     }
 
     public static void setOwner(ItemStack stack, PlayerEntity player) {
-        stack.getOrCreateTag().putUniqueId(NBT_PLAYER, player.getUniqueID());
+        stack.getOrCreateTag().putUUID(NBT_PLAYER, player.getUUID());
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         UUID ownerUuid = getOwnerUuid(stack);
 
         if (worldIn != null) {
@@ -60,26 +62,26 @@ public abstract class PlayerLinkedItem extends Item {
 
     private static ITextComponent getOwnerText(UUID ownerUuid, @Nullable PlayerEntity owner) {
         ITextComponent text = owner != null
-                ? new StringTextComponent(owner.getScoreboardName()).mergeStyle(TextFormatting.GREEN)
-                : new StringTextComponent(ownerUuid.toString()).mergeStyle(TextFormatting.RED);
+                ? new StringTextComponent(owner.getScoreboardName()).withStyle(TextFormatting.GREEN)
+                : new StringTextComponent(ownerUuid.toString()).withStyle(TextFormatting.RED);
         return ChaosMod.TEXT.translate("item", "chaos_linker.owner", text);
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack stack = playerIn.getHeldItem(handIn);
+    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        ItemStack stack = playerIn.getItemInHand(handIn);
         UUID ownerUuid = getOwnerUuid(stack);
 
         if (ownerUuid == null) {
-            if (playerIn.isSneaking()) {
+            if (playerIn.isShiftKeyDown()) {
                 setOwner(stack, playerIn);
-                return ActionResult.resultSuccess(stack);
+                return ActionResult.success(stack);
             } else {
-                playerIn.sendStatusMessage(ChaosMod.TEXT.translate("item", "chaos_linker.notSneaking"), true);
-                return ActionResult.resultFail(stack);
+                playerIn.displayClientMessage(ChaosMod.TEXT.translate("item", "chaos_linker.notSneaking"), true);
+                return ActionResult.fail(stack);
             }
         }
 
-        return ActionResult.resultPass(stack);
+        return ActionResult.pass(stack);
     }
 }

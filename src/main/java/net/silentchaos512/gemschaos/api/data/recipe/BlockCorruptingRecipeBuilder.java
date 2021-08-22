@@ -26,11 +26,11 @@ public class BlockCorruptingRecipeBuilder {
     }
 
     public static BlockCorruptingRecipeBuilder builder(IItemProvider block, IItemProvider result, int chaosDissipated) {
-        return new BlockCorruptingRecipeBuilder(Ingredient.fromItems(block), result, chaosDissipated);
+        return new BlockCorruptingRecipeBuilder(Ingredient.of(block), result, chaosDissipated);
     }
 
     public static BlockCorruptingRecipeBuilder builder(ITag<Item> itemTag, IItemProvider result, int chaosDissipated) {
-        return new BlockCorruptingRecipeBuilder(Ingredient.fromTag(itemTag), result, chaosDissipated);
+        return new BlockCorruptingRecipeBuilder(Ingredient.of(itemTag), result, chaosDissipated);
     }
 
     public static BlockCorruptingRecipeBuilder builder(Ingredient ingredient, IItemProvider result, int chaosDissipated) {
@@ -56,31 +56,31 @@ public class BlockCorruptingRecipeBuilder {
         }
 
         @Override
-        public void serialize(JsonObject json) {
+        public void serializeRecipeData(JsonObject json) {
             json.addProperty("chaosDissipated", chaosDissipated);
-            json.add("ingredient", ingredient.serialize());
+            json.add("ingredient", ingredient.toJson());
             json.addProperty("result", NameUtils.from(result).toString());
         }
 
         @Override
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return id;
         }
 
         @Override
-        public IRecipeSerializer<?> getSerializer() {
+        public IRecipeSerializer<?> getType() {
             return ChaosRecipes.BLOCK_CORRUPTING.get();
         }
 
         @Nullable
         @Override
-        public JsonObject getAdvancementJson() {
+        public JsonObject serializeAdvancement() {
             return null;
         }
 
         @Nullable
         @Override
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return null;
         }
     }

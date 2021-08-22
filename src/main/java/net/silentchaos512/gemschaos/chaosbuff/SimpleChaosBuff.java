@@ -84,8 +84,8 @@ public class SimpleChaosBuff implements IChaosBuff {
         if (level < 1) {
             return displayName;
         }
-        return displayName.deepCopy()
-                .appendString(" ")
+        return displayName.copy()
+                .append(" ")
                 .append(new TranslationTextComponent("enchantment.level." + level));
     }
 
@@ -127,8 +127,8 @@ public class SimpleChaosBuff implements IChaosBuff {
         @Override
         public T deserialize(ResourceLocation id, JsonObject json) {
             T buff = factory.apply(id);
-            buff.maxLevel = JSONUtils.getInt(json, "maxLevel", 1);
-            buff.displayName = ITextComponent.Serializer.getComponentFromJson(json.get("displayName"));
+            buff.maxLevel = JSONUtils.getAsInt(json, "maxLevel", 1);
+            buff.displayName = ITextComponent.Serializer.fromJson(json.get("displayName"));
 
             readSlots(buff, json);
             readCost(buff, json.get("cost"));
@@ -159,7 +159,7 @@ public class SimpleChaosBuff implements IChaosBuff {
             }
             JsonObject json = jsonElement.getAsJsonObject();
 
-            buff.inactiveCost = JSONUtils.getInt(json, "inactive", 0);
+            buff.inactiveCost = JSONUtils.getAsInt(json, "inactive", 0);
 
             JsonElement elem = json.get("active");
             if (elem == null) {
@@ -196,8 +196,8 @@ public class SimpleChaosBuff implements IChaosBuff {
         @Override
         public T read(ResourceLocation id, PacketBuffer buffer) {
             T buff = factory.apply(id);
-            ITextComponent displayName = buffer.readTextComponent();
-            buff.displayName = displayName.deepCopy();
+            ITextComponent displayName = buffer.readComponent();
+            buff.displayName = displayName.copy();
             buff.maxLevel = buffer.readByte();
             buff.slotsByLevel = buffer.readVarIntArray();
             buff.inactiveCost = buffer.readVarInt();
@@ -216,7 +216,7 @@ public class SimpleChaosBuff implements IChaosBuff {
 
         @Override
         public void write(PacketBuffer buffer, T buff) {
-            buffer.writeTextComponent(buff.displayName);
+            buffer.writeComponent(buff.displayName);
             buffer.writeByte(buff.maxLevel);
             buffer.writeVarIntArray(buff.slotsByLevel);
             buffer.writeVarInt(buff.inactiveCost);

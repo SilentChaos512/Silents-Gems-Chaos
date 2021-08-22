@@ -9,10 +9,10 @@ import java.util.function.Predicate;
 
 public enum CostConditions implements ICostCondition {
     NO_CONDITION(p -> true),
-    BURNING(Entity::isBurning),
+    BURNING(Entity::isOnFire),
 //    FREEZING(p -> p.getActivePotionEffect(GemsEffects.FREEZING.get()) != null),
 //    SHOCKING(p -> p.getActivePotionEffect(GemsEffects.SHOCKING.get()) != null),
-    FLYING(p -> p.abilities.isFlying),
+    FLYING(p -> p.abilities.flying),
     HURT(p -> p.getHealth() < p.getMaxHealth() - 0.5f),
     IN_AIR(p -> !p.isOnGround()),
     MOVING(CostConditions::hasMoved),

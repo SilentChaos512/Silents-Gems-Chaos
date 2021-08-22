@@ -46,7 +46,7 @@ public class ChaosXpStorage extends XpStorageItemImpl {
         UUID uuid = PlayerLinkedItem.getOwnerUuid(stack);
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (uuid != null && server != null) {
-            return server.getPlayerList().getPlayerByUUID(uuid);
+            return server.getPlayerList().getPlayer(uuid);
         }
         return null;
     }

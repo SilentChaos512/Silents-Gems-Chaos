@@ -17,10 +17,10 @@ public class ChaosItemTagsProvider extends ItemTagsProvider {
     }
 
     @Override
-    protected void registerTags() {
-        getOrCreateBuilder(ChaosTags.Items.GEMS_CHAOS).add(ChaosItems.CHAOS_CRYSTAL.get());
+    protected void addTags() {
+        tag(ChaosTags.Items.GEMS_CHAOS).add(ChaosItems.CHAOS_CRYSTAL.get());
 
-        getOrCreateBuilder(ChaosTags.Items.DIRT)
+        tag(ChaosTags.Items.DIRT)
                 .add(Blocks.DIRT.asItem())
                 .add(Blocks.GRASS_BLOCK.asItem())
                 .add(Blocks.COARSE_DIRT.asItem())

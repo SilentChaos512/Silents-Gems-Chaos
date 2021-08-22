@@ -26,8 +26,8 @@ public class InfusingRecipe extends SingleItemRecipe {
 
     @Override
     public boolean matches(IInventory inv, World worldIn) {
-        ItemStack inputItem = inv.getStackInSlot(0);
-        ItemStack catalystItem = inv.getStackInSlot(1);
+        ItemStack inputItem = inv.getItem(0);
+        ItemStack catalystItem = inv.getItem(1);
         return this.ingredient.test(inputItem) && this.catalyst.test(catalystItem);
     }
 
@@ -56,31 +56,31 @@ public class InfusingRecipe extends SingleItemRecipe {
     }
 
     @Override
-    public boolean isDynamic() {
+    public boolean isSpecial() {
         return true;
     }
 
     public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<InfusingRecipe> {
         @Override
-        public InfusingRecipe read(ResourceLocation recipeId, JsonObject json) {
-            Ingredient ingredient = Ingredient.deserialize(json.get("ingredient"));
-            Ingredient catalyst = Ingredient.deserialize(json.get("catalyst"));
+        public InfusingRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+            Ingredient ingredient = Ingredient.fromJson(json.get("ingredient"));
+            Ingredient catalyst = Ingredient.fromJson(json.get("catalyst"));
 
-            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(JSONUtils.getString(json, "result")));
-            int count = JSONUtils.getInt(json, "count", 1);
+            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(JSONUtils.getAsString(json, "result")));
+            int count = JSONUtils.getAsInt(json, "count", 1);
             ItemStack resultStack = new ItemStack(item, count);
 
             InfusingRecipe recipe = new InfusingRecipe(recipeId, ingredient, catalyst, resultStack);
-            recipe.chaosPerTick = JSONUtils.getInt(json, "chaosPerTick", recipe.chaosPerTick);
-            recipe.processTime = JSONUtils.getInt(json, "processTime", recipe.processTime);
+            recipe.chaosPerTick = JSONUtils.getAsInt(json, "chaosPerTick", recipe.chaosPerTick);
+            recipe.processTime = JSONUtils.getAsInt(json, "processTime", recipe.processTime);
             return recipe;
         }
 
         @Override
-        public InfusingRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
-            Ingredient ingredient = Ingredient.read(buffer);
-            Ingredient catalyst = Ingredient.read(buffer);
-            ItemStack result = buffer.readItemStack();
+        public InfusingRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+            Ingredient ingredient = Ingredient.fromNetwork(buffer);
+            Ingredient catalyst = Ingredient.fromNetwork(buffer);
+            ItemStack result = buffer.readItem();
             InfusingRecipe recipe = new InfusingRecipe(recipeId, ingredient, catalyst, result);
             recipe.chaosPerTick = buffer.readVarInt();
             recipe.processTime = buffer.readVarInt();
@@ -88,10 +88,10 @@ public class InfusingRecipe extends SingleItemRecipe {
         }
 
         @Override
-        public void write(PacketBuffer buffer, InfusingRecipe recipe) {
-            recipe.ingredient.write(buffer);
-            recipe.catalyst.write(buffer);
-            buffer.writeItemStack(recipe.result);
+        public void toNetwork(PacketBuffer buffer, InfusingRecipe recipe) {
+            recipe.ingredient.toNetwork(buffer);
+            recipe.catalyst.toNetwork(buffer);
+            buffer.writeItem(recipe.result);
             buffer.writeVarInt(recipe.chaosPerTick);
             buffer.writeVarInt(recipe.processTime);
         }

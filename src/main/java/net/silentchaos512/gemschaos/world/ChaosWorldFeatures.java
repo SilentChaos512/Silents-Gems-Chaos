@@ -31,7 +31,7 @@ public final class ChaosWorldFeatures {
         configuredFeaturesRegistered = true;
 
         registerConfiguredFeature("chaos", ChaosConfig.Common.chaosOres.createConfiguredFeature(
-                OreFeatureConfig.FillerBlockType.BASE_STONE_OVERWORLD,
+                OreFeatureConfig.FillerBlockType.NATURAL_STONE,
                 ChaosBlocks.CHAOS_ORE.asBlockState()));
     }
 
@@ -42,7 +42,7 @@ public final class ChaosWorldFeatures {
 
     private static void addOreFeature(BiomeLoadingEvent biome, OreConfig config) {
         if (config.isEnabled()) {
-            biome.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, config.getConfiguredFeature());
+            biome.getGeneration().addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, config.getConfiguredFeature());
         }
     }
 }

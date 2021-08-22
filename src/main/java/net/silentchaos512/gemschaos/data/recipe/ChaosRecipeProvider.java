@@ -18,7 +18,7 @@ public class ChaosRecipeProvider extends LibRecipeProvider {
     }
 
     @Override
-    protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
+    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
         registerOresAndCrystals(consumer);
         registerBlockCorrupting(consumer);
     }

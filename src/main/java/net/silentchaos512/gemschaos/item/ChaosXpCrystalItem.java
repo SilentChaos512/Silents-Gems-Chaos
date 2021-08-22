@@ -15,6 +15,8 @@ import net.silentchaos512.gemschaos.compat.tokenenchanter.TokenEnchanterCompat;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 public class ChaosXpCrystalItem extends PlayerLinkedItem {
     public ChaosXpCrystalItem(Properties properties) {
         super(properties);
@@ -27,13 +29,13 @@ public class ChaosXpCrystalItem extends PlayerLinkedItem {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         if (!ModList.get().isLoaded(Const.TOKEN_ENCHANTER_MOD_ID)) {
-            tooltip.add(TextUtil.itemSub(this, "modNotInstalled").mergeStyle(TextFormatting.RED));
+            tooltip.add(TextUtil.itemSub(this, "modNotInstalled").withStyle(TextFormatting.RED));
         } else {
-            tooltip.add(TextUtil.itemSub(this, "desc").mergeStyle(TextFormatting.ITALIC));
+            tooltip.add(TextUtil.itemSub(this, "desc").withStyle(TextFormatting.ITALIC));
         }
 
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
     }
 }

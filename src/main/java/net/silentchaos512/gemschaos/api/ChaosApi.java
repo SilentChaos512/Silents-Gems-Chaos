@@ -39,7 +39,7 @@ public class ChaosApi {
             int amountLeft = amount;
             if (allowOrbs) {
                 // Chaos orbs absorb chaos, but put it all into the first we find
-                for (ItemStack stack : player.inventory.mainInventory) {
+                for (ItemStack stack : player.inventory.items) {
                     if (!stack.isEmpty() && stack.getItem() instanceof ChaosOrbItem) {
                         amountLeft = ChaosOrbItem.absorbChaos(player, stack, amountLeft);
                         break;
@@ -47,7 +47,7 @@ public class ChaosApi {
                 }
             }
 
-            generate(player, amountLeft, player.getPosition());
+            generate(player, amountLeft, player.blockPosition());
         }
 
         /**

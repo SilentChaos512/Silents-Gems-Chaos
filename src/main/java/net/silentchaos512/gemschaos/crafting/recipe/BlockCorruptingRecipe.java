@@ -32,7 +32,7 @@ public class BlockCorruptingRecipe extends SingleItemRecipe {
 
     @Override
     public boolean matches(IInventory inv, World worldIn) {
-        return this.ingredient.test(inv.getStackInSlot(0));
+        return this.ingredient.test(inv.getItem(0));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class BlockCorruptingRecipe extends SingleItemRecipe {
     }
 
     public BlockState getResultBlock(BlockState state) {
-        BlockState result = ((BlockItem) this.result.getItem()).getBlock().getDefaultState();
+        BlockState result = ((BlockItem) this.result.getItem()).getBlock().defaultBlockState();
         for (Property<?> property : result.getProperties()) {
             if (state.hasProperty(property)) {
                 result = copyProperty(result, state, property);
@@ -60,10 +60,10 @@ public class BlockCorruptingRecipe extends SingleItemRecipe {
         //noinspection ChainOfInstanceofChecks
         if (property instanceof DirectionProperty) {
             DirectionProperty prop = (DirectionProperty) property;
-            return copy.with(prop, original.get(prop));
+            return copy.setValue(prop, original.getValue(prop));
         } else if (property instanceof BooleanProperty) {
             BooleanProperty prop = (BooleanProperty) property;
-            return copy.with(prop, original.get(prop));
+            return copy.setValue(prop, original.getValue(prop));
         }
         return copy;
     }
@@ -77,16 +77,16 @@ public class BlockCorruptingRecipe extends SingleItemRecipe {
     }
 
     @Override
-    public boolean isDynamic() {
+    public boolean isSpecial() {
         return true;
     }
 
     public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<BlockCorruptingRecipe> {
         @Override
-        public BlockCorruptingRecipe read(ResourceLocation recipeId, JsonObject json) {
-            Ingredient ingredient = Ingredient.deserialize(json.get("ingredient"));
+        public BlockCorruptingRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+            Ingredient ingredient = Ingredient.fromJson(json.get("ingredient"));
 
-            ResourceLocation itemId = new ResourceLocation(JSONUtils.getString(json, "result"));
+            ResourceLocation itemId = new ResourceLocation(JSONUtils.getAsString(json, "result"));
             Item item = ForgeRegistries.ITEMS.getValue(itemId);
             if (item == null) {
                 throw new JsonParseException("Unknown item: " + itemId);
@@ -96,23 +96,23 @@ public class BlockCorruptingRecipe extends SingleItemRecipe {
             ItemStack resultStack = new ItemStack(item);
 
             BlockCorruptingRecipe recipe = new BlockCorruptingRecipe(recipeId, ingredient, resultStack);
-            recipe.chaosDissipated = JSONUtils.getInt(json, "chaosDissipated", recipe.chaosDissipated);
+            recipe.chaosDissipated = JSONUtils.getAsInt(json, "chaosDissipated", recipe.chaosDissipated);
             return recipe;
         }
 
         @Override
-        public BlockCorruptingRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
-            Ingredient ingredient = Ingredient.read(buffer);
-            ItemStack result = buffer.readItemStack();
+        public BlockCorruptingRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+            Ingredient ingredient = Ingredient.fromNetwork(buffer);
+            ItemStack result = buffer.readItem();
             BlockCorruptingRecipe recipe = new BlockCorruptingRecipe(recipeId, ingredient, result);
             recipe.chaosDissipated = buffer.readVarInt();
             return recipe;
         }
 
         @Override
-        public void write(PacketBuffer buffer, BlockCorruptingRecipe recipe) {
-            recipe.ingredient.write(buffer);
-            buffer.writeItemStack(recipe.result);
+        public void toNetwork(PacketBuffer buffer, BlockCorruptingRecipe recipe) {
+            recipe.ingredient.toNetwork(buffer);
+            buffer.writeItem(recipe.result);
             buffer.writeVarInt(recipe.chaosDissipated);
         }
     }

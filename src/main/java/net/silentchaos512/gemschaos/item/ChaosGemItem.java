@@ -37,6 +37,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.item.Item.Properties;
+
 public class ChaosGemItem extends Item implements IGem {
     private static final String NBT_ENABLED = "Enabled";
     private static final String NBT_BUFF_LIST = "Buffs";
@@ -215,11 +217,11 @@ public class ChaosGemItem extends Item implements IGem {
     }
 
     public static void pedestalTick(ItemStack stack, WorldPos pos) {
-        if (pos.getWorld().isRemote || !isEnabled(stack)) return;
+        if (pos.getWorld().isClientSide || !isEnabled(stack)) return;
 
         int totalChaos = 0;
-        AxisAlignedBB boundingBox = new AxisAlignedBB(pos.getPos()).grow(PEDESTAL_RANGE);
-        List<PlayerEntity> players = pos.getWorld().getEntitiesWithinAABB(PlayerEntity.class, boundingBox);
+        AxisAlignedBB boundingBox = new AxisAlignedBB(pos.getPos()).inflate(PEDESTAL_RANGE);
+        List<PlayerEntity> players = pos.getWorld().getEntitiesOfClass(PlayerEntity.class, boundingBox);
         for (PlayerEntity player : players) {
             applyEffects(stack, player);
             totalChaos += getChaosGenerated(stack, player);
@@ -237,7 +239,7 @@ public class ChaosGemItem extends Item implements IGem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
-        if (world.isRemote || !(entity instanceof PlayerEntity)) return;
+        if (world.isClientSide || !(entity instanceof PlayerEntity)) return;
 
         // Apply effects?
         if (isEnabled(stack)) {
@@ -255,8 +257,8 @@ public class ChaosGemItem extends Item implements IGem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getItemInHand(hand);
 
         if (!stack.isEmpty()) {
             setEnabled(stack, !isEnabled(stack));
@@ -272,7 +274,7 @@ public class ChaosGemItem extends Item implements IGem {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         getBuffs(stack).forEach((buff, level) -> tooltip.add(buff.getDisplayName(level)));
         tooltip.add(ChaosMod.TEXT.translate("item", "chaos_gem.slots", getSlotsUsed(stack), MAX_SLOTS));
         tooltip.add(chaosGenTooltip("chaos", getChaosGenerated(stack, Minecraft.getInstance().player)));
@@ -285,17 +287,17 @@ public class ChaosGemItem extends Item implements IGem {
     }
 
     @Override
-    public ITextComponent getDisplayName(ItemStack stack) {
-        return getName();
+    public ITextComponent getName(ItemStack stack) {
+        return getDescription();
     }
 
     @Override
-    public ITextComponent getName() {
+    public ITextComponent getDescription() {
         return ChaosMod.TEXT.translate("item", "chaos_gem", this.gem.getDisplayName());
     }
 
     @Override
-    public boolean hasEffect(ItemStack stack) {
+    public boolean isFoil(ItemStack stack) {
         return isEnabled(stack);
     }
 
@@ -303,7 +305,7 @@ public class ChaosGemItem extends Item implements IGem {
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         boolean oldEnabled = isEnabled(oldStack);
         boolean newEnabled = isEnabled(newStack);
-        return slotChanged || oldEnabled != newEnabled || !oldStack.isItemEqual(newStack);
+        return slotChanged || oldEnabled != newEnabled || !oldStack.sameItem(newStack);
     }
 
     //endregion

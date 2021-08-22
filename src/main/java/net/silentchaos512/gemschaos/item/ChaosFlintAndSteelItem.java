@@ -21,23 +21,25 @@ import net.silentchaos512.lib.util.WorldUtils;
 
 import java.util.Optional;
 
+import net.minecraft.item.Item.Properties;
+
 public class ChaosFlintAndSteelItem extends FlintAndSteelItem {
     public ChaosFlintAndSteelItem(Properties builder) {
         super(builder);
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
+    public ActionResultType useOn(ItemUseContext context) {
         PlayerEntity player = context.getPlayer();
-        World world = context.getWorld();
-        BlockPos pos = context.getPos();
+        World world = context.getLevel();
+        BlockPos pos = context.getClickedPos();
         BlockState blockstate = world.getBlockState(pos);
 
         Item blockItem = blockstate.getBlock().asItem();
-        BlockCorruptingRecipe recipe = world.getRecipeManager().getRecipe(ChaosRecipes.Types.BLOCK_CORRUPTING, new Inventory(new ItemStack(blockItem)), world).orElse(null);
+        BlockCorruptingRecipe recipe = world.getRecipeManager().getRecipeFor(ChaosRecipes.Types.BLOCK_CORRUPTING, new Inventory(new ItemStack(blockItem)), world).orElse(null);
 
         if (recipe != null) {
-            world.playSound(player, pos, SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.4F + 0.8F);
+            world.playSound(player, pos, SoundEvents.FLINTANDSTEEL_USE, SoundCategory.BLOCKS, 1.0F, random.nextFloat() * 0.4F + 0.8F);
 
             // TODO: corrupt a spherical patch of blocks
             WorldUtils.getBlocksInSphere(world, pos, 2, (w, p1) -> {
@@ -45,19 +47,19 @@ public class ChaosFlintAndSteelItem extends FlintAndSteelItem {
                     return Optional.of(w.getBlockState(p1));
                 }
                 return Optional.empty();
-            }).forEach((p, s) -> world.setBlockState(p, recipe.getResultBlock(s), 11));
+            }).forEach((p, s) -> world.setBlock(p, recipe.getResultBlock(s), 11));
 
             ChaosApi.Chaos.dissipate(player, recipe.getChaosDissipated());
 
             if (player instanceof ServerPlayerEntity) {
-                ItemStack itemstack = context.getItem();
+                ItemStack itemstack = context.getItemInHand();
                 CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity) player, pos, itemstack);
-                itemstack.damageItem(1, player, (playerIn) -> {
-                    playerIn.sendBreakAnimation(context.getHand());
+                itemstack.hurtAndBreak(1, player, (playerIn) -> {
+                    playerIn.broadcastBreakEvent(context.getHand());
                 });
             }
 
-            return ActionResultType.func_233537_a_(world.isRemote());
+            return ActionResultType.sidedSuccess(world.isClientSide());
         } else {
             return ActionResultType.FAIL;
         }

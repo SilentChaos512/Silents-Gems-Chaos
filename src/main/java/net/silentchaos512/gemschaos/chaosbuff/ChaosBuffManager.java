@@ -43,7 +43,7 @@ public final class ChaosBuffManager implements IResourceManagerReloadListener {
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
         Gson gson = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
-        Collection<ResourceLocation> resources = resourceManager.getAllResourceLocations(
+        Collection<ResourceLocation> resources = resourceManager.listResources(
                 DATA_PATH, s -> s.endsWith(".json"));
         if (resources.isEmpty()) return;
 

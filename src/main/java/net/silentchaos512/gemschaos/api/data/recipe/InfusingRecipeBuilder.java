@@ -49,34 +49,34 @@ public class InfusingRecipeBuilder {
         }
 
         @Override
-        public void serialize(JsonObject json) {
+        public void serializeRecipeData(JsonObject json) {
             json.addProperty("chaosPerTick", chaosPerTick);
             json.addProperty("processTime", processTime);
-            json.add("ingredient", ingredient.serialize());
-            json.add("catalyst", catalyst.serialize());
+            json.add("ingredient", ingredient.toJson());
+            json.add("catalyst", catalyst.toJson());
             json.addProperty("result", NameUtils.from(result).toString());
             json.addProperty("count", count);
         }
 
         @Override
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return id;
         }
 
         @Override
-        public IRecipeSerializer<?> getSerializer() {
+        public IRecipeSerializer<?> getType() {
             return ChaosRecipes.INFUSING.get();
         }
 
         @Nullable
         @Override
-        public JsonObject getAdvancementJson() {
+        public JsonObject serializeAdvancement() {
             return null;
         }
 
         @Nullable
         @Override
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return null;
         }
     }

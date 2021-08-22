@@ -24,8 +24,8 @@ public class ApplyChaosRuneRecipe extends SpecialRecipe {
     public boolean matches(CraftingInventory inv, World worldIn) {
         int chaosGems = 0;
         int chaosRunes = 0;
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
-            ItemStack stack = inv.getStackInSlot(i);
+        for (int i = 0; i < inv.getContainerSize(); ++i) {
+            ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty()) {
                 if (stack.getItem() instanceof ChaosGemItem) {
                     ++chaosGems;
@@ -42,12 +42,12 @@ public class ApplyChaosRuneRecipe extends SpecialRecipe {
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
+    public ItemStack assemble(CraftingInventory inv) {
         ItemStack chaosGem = ItemStack.EMPTY;
         List<ItemStack> runes = NonNullList.create();
 
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
-            ItemStack stack = inv.getStackInSlot(i);
+        for (int i = 0; i < inv.getContainerSize(); ++i) {
+            ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty()) {
                 if (stack.getItem() instanceof ChaosRuneItem) {
                     // Any number of runes
@@ -77,7 +77,7 @@ public class ApplyChaosRuneRecipe extends SpecialRecipe {
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return width * height > 1;
     }
 

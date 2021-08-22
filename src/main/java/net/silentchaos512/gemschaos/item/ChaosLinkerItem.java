@@ -8,6 +8,8 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 public class ChaosLinkerItem extends PlayerLinkedItem {
 
     public ChaosLinkerItem(Properties properties) {
@@ -15,8 +17,8 @@ public class ChaosLinkerItem extends PlayerLinkedItem {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
 
         // TODO: Display player's chaos? Need to sync values with client for that to work.
     }

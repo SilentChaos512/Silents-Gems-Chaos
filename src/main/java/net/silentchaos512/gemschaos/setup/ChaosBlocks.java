@@ -26,10 +26,10 @@ public final class ChaosBlocks {
     private static final Collection<BlockRegistryObject<? extends Block>> SIMPLE_BLOCKS = new ArrayList<>();
 
     public static final BlockRegistryObject<Block> CHAOS_ORE = registerSimple("chaos_ore", () ->
-            new Block(AbstractBlock.Properties.create(Material.ROCK)
-                    .hardnessAndResistance(4, 20)
+            new Block(AbstractBlock.Properties.of(Material.STONE)
+                    .strength(4, 20)
                     .harvestLevel(3)
-                    .setRequiresTool()
+                    .requiresCorrectToolForDrops()
             ) {
                 @Override
                 public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silkTouch) {
@@ -38,8 +38,8 @@ public final class ChaosBlocks {
             });
 
     public static final BlockRegistryObject<Block> CHAOS_CRYSTAL_BLOCK = registerSimple("chaos_crystal_block", () ->
-            new Block(AbstractBlock.Properties.create(Material.IRON)
-                    .hardnessAndResistance(4, 30)
+            new Block(AbstractBlock.Properties.of(Material.METAL)
+                    .strength(4, 30)
                     .sound(SoundType.METAL)));
 
     public static final BlockRegistryObject<Block> CORRUPTED_STONE = registerSimple("corrupted_stone", ChaosBlocks::createCorruptedBlock);
@@ -58,10 +58,10 @@ public final class ChaosBlocks {
     }
 
     private static Block createCorruptedBlock() {
-        return new Block(AbstractBlock.Properties.create(Material.CLAY)
-                .hardnessAndResistance(1)
-                .sound(SoundType.GROUND)
-                .setLightLevel(state -> 7));
+        return new Block(AbstractBlock.Properties.of(Material.CLAY)
+                .strength(1)
+                .sound(SoundType.GRAVEL)
+                .lightLevel(state -> 7));
     }
 
     private static <T extends Block> BlockRegistryObject<T> registerNoItem(String name, Supplier<T> block) {
@@ -85,6 +85,6 @@ public final class ChaosBlocks {
     }
 
     private static <T extends Block> Supplier<BlockItem> defaultItem(BlockRegistryObject<T> block) {
-        return () -> new BlockItem(block.get(), new Item.Properties().group(ChaosMod.ITEM_GROUP));
+        return () -> new BlockItem(block.get(), new Item.Properties().tab(ChaosMod.ITEM_GROUP));
     }
 }

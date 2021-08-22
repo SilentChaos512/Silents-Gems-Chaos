@@ -25,7 +25,7 @@ public final class ChaosItems {
             new ChaosLinkerItem(unstackableProps()));
 
     public static final ItemRegistryObject<ChaosFlintAndSteelItem> CHAOS_FLINT_AND_STEEL = registerSimpleModel("chaos_flint_and_steel", () ->
-            new ChaosFlintAndSteelItem(unstackableProps().maxDamage(8)));
+            new ChaosFlintAndSteelItem(unstackableProps().durability(8)));
 
     public static final ItemRegistryObject<ChaosOrbItem> CHAOS_POTATO = register("chaos_potato", () ->
             new ChaosOrbItem(0, 5000, 0.5f));
@@ -80,10 +80,10 @@ public final class ChaosItems {
     }
 
     private static Item.Properties baseProps() {
-        return new Item.Properties().group(ChaosMod.ITEM_GROUP);
+        return new Item.Properties().tab(ChaosMod.ITEM_GROUP);
     }
 
     private static Item.Properties unstackableProps() {
-        return baseProps().maxStackSize(1);
+        return baseProps().stacksTo(1);
     }
 }

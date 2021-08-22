@@ -29,7 +29,7 @@ public final class ChaosBuffSerializers {
     }
 
     public static IChaosBuff deserialize(ResourceLocation id, JsonObject json) {
-        String typeStr = JSONUtils.getString(json, "type");
+        String typeStr = JSONUtils.getAsString(json, "type");
         ResourceLocation type = ChaosMod.getIdWithDefaultNamespace(typeStr);
 
         IChaosBuffSerializer<?> serializer = REGISTRY.get(type);

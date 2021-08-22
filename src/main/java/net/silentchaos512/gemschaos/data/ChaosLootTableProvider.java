@@ -36,23 +36,23 @@ public class ChaosLootTableProvider extends LootTableProvider {
 
     @Override
     protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {
-        map.forEach((p_218436_2_, p_218436_3_) -> LootTableManager.validateLootTable(validationtracker, p_218436_2_, p_218436_3_));
+        map.forEach((p_218436_2_, p_218436_3_) -> LootTableManager.validate(validationtracker, p_218436_2_, p_218436_3_));
     }
 
     private static final class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
         @Override
         protected void addTables() {
-            this.registerLootTable(ChaosBlocks.CHAOS_ORE.get(), block ->
-                    droppingWithSilkTouch(block, withExplosionDecay(block, ItemLootEntry.builder(ChaosItems.CHAOS_CRYSTAL)
-                            .acceptFunction(SetCount.builder(RandomValueRange.of(3, 4)))
-                            .acceptFunction(ApplyBonus.uniformBonusCount(Enchantments.FORTUNE)))));
+            this.add(ChaosBlocks.CHAOS_ORE.get(), block ->
+                    createSilkTouchDispatchTable(block, applyExplosionDecay(block, ItemLootEntry.lootTableItem(ChaosItems.CHAOS_CRYSTAL)
+                            .apply(SetCount.setCount(RandomValueRange.between(3, 4)))
+                            .apply(ApplyBonus.addUniformBonusCount(Enchantments.BLOCK_FORTUNE)))));
 
-            registerDropSelfLootTable(ChaosBlocks.CHAOS_CRYSTAL_BLOCK.get());
+            dropSelf(ChaosBlocks.CHAOS_CRYSTAL_BLOCK.get());
 
-            registerLootTable(ChaosBlocks.CORRUPTED_STONE.get(), b ->
-                    droppingWithSilkTouchOrRandomly(b, ChaosItems.CORRUPTED_STONE_PILE, ConstantRange.of(4)));
-            registerLootTable(ChaosBlocks.CORRUPTED_DIRT.get(), b ->
-                    droppingWithSilkTouchOrRandomly(b, ChaosItems.CORRUPTED_DIRT_PILE, ConstantRange.of(4)));
+            add(ChaosBlocks.CORRUPTED_STONE.get(), b ->
+                    createSingleItemTableWithSilkTouch(b, ChaosItems.CORRUPTED_STONE_PILE, ConstantRange.exactly(4)));
+            add(ChaosBlocks.CORRUPTED_DIRT.get(), b ->
+                    createSingleItemTableWithSilkTouch(b, ChaosItems.CORRUPTED_DIRT_PILE, ConstantRange.exactly(4)));
         }
 
         @Override

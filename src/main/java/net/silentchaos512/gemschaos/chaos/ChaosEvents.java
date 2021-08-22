@@ -49,11 +49,11 @@ public final class ChaosEvents {
 
     static {
         addChaosEvent(ChaosMod.getId("lightning"), new ChaosEvent(0.1f, 120, 500_000, MAX_CHAOS, 50_000, "Spawn a regular lightning bolt (can cause fire)", (player, chaos) ->
-                spawnLightningBolt(player, player.world)
+                spawnLightningBolt(player, player.level)
         ));
         addChaosEvent(ChaosMod.getId("chaos_lightning"), new ChaosEvent(0.3f, 60, 300_000, MAX_CHAOS, 30_000, "Spawn several lightning bolts that do not cause fire", (player, chaos) -> {
             int boltCount = 5 + ChaosMod.RANDOM.nextInt(6);
-            return spawnChaosLightningBolts(player, player.world, boltCount);
+            return spawnChaosLightningBolts(player, player.level, boltCount);
         }));
 //        addChaosEvent(ChaosMod.getId("corrupt_blocks"), new ChaosEvent(0.2f, 300, 750_000, MAX_CHAOS, 100_000, "Create a patch of corrupted blocks", (player, chaos) ->
 //                corruptBlocks(player, player.world)
@@ -92,7 +92,7 @@ public final class ChaosEvents {
         if (player == null || !player.isAlive() || (ChaosConfig.Common.chaosNoEventsUntilHasBed.get() && !hasBed(player)))
             return;
 
-        Map<ResourceLocation, Integer> cooldownTimers = COOLDOWN_TIMERS.computeIfAbsent(player.getUniqueID(), uuid -> new HashMap<>());
+        Map<ResourceLocation, Integer> cooldownTimers = COOLDOWN_TIMERS.computeIfAbsent(player.getUUID(), uuid -> new HashMap<>());
 
         //noinspection OverlyLongLambda
         EVENTS.forEach((id, event) -> {
@@ -118,7 +118,7 @@ public final class ChaosEvents {
     }
 
     private static boolean hasBed(PlayerEntity player) {
-        return player.getBedPosition().isPresent();
+        return player.getSleepingPos().isPresent();
     }
 
     public static Collection<ResourceLocation> getEventIds() {
@@ -173,28 +173,28 @@ public final class ChaosEvents {
         ++tickTimer;
         if (!LIGHTNING_QUEUE.isEmpty() && tickTimer % LIGHTNING_TICK_FREQUENCY == 0) {
             LightningBoltEntity bolt = LIGHTNING_QUEUE.remove().get();
-            bolt.world.addEntity(bolt);
+            bolt.level.addFreshEntity(bolt);
         }
     }
 
     private static boolean spawnLightningBolt(Entity entity, World world) {
-        if (world instanceof ServerWorld && canSpawnLightningIn(world.getDimensionKey())) {
-            double posX = entity.getPosX() + MathUtils.nextIntInclusive(-64, 64);
-            double posZ = entity.getPosZ() + MathUtils.nextIntInclusive(-64, 64);
+        if (world instanceof ServerWorld && canSpawnLightningIn(world.dimension())) {
+            double posX = entity.getX() + MathUtils.nextIntInclusive(-64, 64);
+            double posZ = entity.getZ() + MathUtils.nextIntInclusive(-64, 64);
             int height = world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) posX, (int) posZ);
             LightningBoltEntity bolt = new LightningBoltEntity(EntityType.LIGHTNING_BOLT, world);
-            bolt.moveForced(new Vector3d(posX, height, posZ));
-            world.addEntity(bolt);
+            bolt.moveTo(new Vector3d(posX, height, posZ));
+            world.addFreshEntity(bolt);
             return true;
         }
         return false;
     }
 
     private static boolean spawnChaosLightningBolts(Entity entity, World world, int count) {
-        if (world instanceof ServerWorld && canSpawnLightningIn(world.getDimensionKey())) {
+        if (world instanceof ServerWorld && canSpawnLightningIn(world.dimension())) {
             for (int i = 0; i < count; ++i) {
-                double posX = entity.getPosX() + MathUtils.nextIntInclusive(-64, 64);
-                double posZ = entity.getPosZ() + MathUtils.nextIntInclusive(-64, 64);
+                double posX = entity.getX() + MathUtils.nextIntInclusive(-64, 64);
+                double posZ = entity.getZ() + MathUtils.nextIntInclusive(-64, 64);
                 int height = world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) posX, (int) posZ);
 //                LIGHTNING_QUEUE.add(() -> new ChaosLightningBoltEntity(world, posX, height, posZ)); // FIXME: re-add entity
             }
@@ -204,7 +204,7 @@ public final class ChaosEvents {
     }
 
     private static boolean canSpawnLightningIn(RegistryKey<World> dimension) {
-        return dimension != World.THE_NETHER && dimension != World.THE_END;
+        return dimension != World.NETHER && dimension != World.END;
     }
 
     /*private static boolean corruptBlocks(Entity entity, World world) {
@@ -246,10 +246,10 @@ public final class ChaosEvents {
     }*/
 
     private static boolean setThunderstorm(World world, int time) {
-        if (!world.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE) || world.getWorldInfo().isThundering() || !(world instanceof ServerWorld))
+        if (!world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) || world.getLevelData().isThundering() || !(world instanceof ServerWorld))
             return false;
 
-        IServerWorldInfo info = ((ServerWorld) world).getServer().getServerConfiguration().getServerWorldInfo();
+        IServerWorldInfo info = ((ServerWorld) world).getServer().getWorldData().overworldData();
         //info.setClearWeatherTime(0);
         info.setRainTime(time);
         info.setThunderTime(time);
@@ -260,19 +260,19 @@ public final class ChaosEvents {
 
     private static boolean applyChaosSickness(PlayerEntity player, Integer chaos) {
         //player.addPotionEffect(new EffectInstance(GemsEffects.CHAOS_SICKNESS.get(), TimeUtils.ticksFromMinutes(10))); // FIXME: re-add effect
-        player.addPotionEffect(new EffectInstance(Effects.MINING_FATIGUE, TimeUtils.ticksFromMinutes(5)));
+        player.addEffect(new EffectInstance(Effects.DIG_SLOWDOWN, TimeUtils.ticksFromMinutes(5)));
         if (chaos > 2_000_000)
-            player.addPotionEffect(new EffectInstance(Effects.HUNGER, TimeUtils.ticksFromMinutes(5)));
+            player.addEffect(new EffectInstance(Effects.HUNGER, TimeUtils.ticksFromMinutes(5)));
         if (chaos > 4_000_000)
-            player.addPotionEffect(new EffectInstance(Effects.WEAKNESS, TimeUtils.ticksFromMinutes(5)));
+            player.addEffect(new EffectInstance(Effects.WEAKNESS, TimeUtils.ticksFromMinutes(5)));
         return true;
     }
 
     public static List<String> getCooldownTimersDebugText(PlayerEntity player) {
-        if (player == null || !COOLDOWN_TIMERS.containsKey(player.getUniqueID()))
+        if (player == null || !COOLDOWN_TIMERS.containsKey(player.getUUID()))
             return ImmutableList.of();
 
-        return COOLDOWN_TIMERS.get(player.getUniqueID()).entrySet().stream()
+        return COOLDOWN_TIMERS.get(player.getUUID()).entrySet().stream()
                 .map(entry -> entry.getKey() + ": " + entry.getValue())
                 .collect(Collectors.toList());
     }

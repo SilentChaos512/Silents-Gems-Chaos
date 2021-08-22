@@ -17,9 +17,9 @@ public class PotionChaosBuff extends SimpleChaosBuff {
             SERIALIZER_ID,
             PotionChaosBuff::new,
             (buff, json) -> {
-                String str = JSONUtils.getString(json, "effect");
+                String str = JSONUtils.getAsString(json, "effect");
                 buff.effect = ForgeRegistries.POTIONS.getValue(new ResourceLocation(str));
-                buff.effectDuration = JSONUtils.getInt(json, "effectDuration", 50);
+                buff.effectDuration = JSONUtils.getAsInt(json, "effectDuration", 50);
             },
             (buff, buffer) -> {
                 buff.effect = ForgeRegistries.POTIONS.getValue(buffer.readResourceLocation());
@@ -44,19 +44,19 @@ public class PotionChaosBuff extends SimpleChaosBuff {
 
     @Override
     public void applyTo(PlayerEntity player, int level) {
-        if (this.effect == Effects.NIGHT_VISION || player.getActivePotionEffect(this.effect) == null) {
-            player.addPotionEffect(new EffectInstance(this.effect, this.effectDuration, level - 1, true, false));
+        if (this.effect == Effects.NIGHT_VISION || player.getEffect(this.effect) == null) {
+            player.addEffect(new EffectInstance(this.effect, this.effectDuration, level - 1, true, false));
         }
     }
 
     @Override
     public void removeFrom(PlayerEntity player) {
-        player.removePotionEffect(this.effect);
+        player.removeEffect(this.effect);
     }
 
     @Override
     public int getRuneColor() {
-        if (effect != null) return effect.getLiquidColor();
+        if (effect != null) return effect.getColor();
         return super.getRuneColor();
     }
 

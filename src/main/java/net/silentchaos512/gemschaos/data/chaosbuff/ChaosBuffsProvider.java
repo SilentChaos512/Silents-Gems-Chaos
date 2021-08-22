@@ -46,7 +46,7 @@ public class ChaosBuffsProvider implements IDataProvider {
                 .withCosts(5, 200)
                 .withCostConditions(CostConditions.BURNING)
         );
-        ret.add(potion(Effects.HASTE, 2)
+        ret.add(potion(Effects.DIG_SPEED, 2)
                 .withSlots(4, 6)
                 .withCosts(3, 50, 60, 80, 100)
         );
@@ -55,7 +55,7 @@ public class ChaosBuffsProvider implements IDataProvider {
                 .withSlots(6)
                 .withCosts(0, 80)
         );
-        ret.add(potion(Effects.JUMP_BOOST, 4)
+        ret.add(potion(Effects.JUMP, 4)
                 .withSlots(4, 5, 6, 7)
                 .withCosts(0, 30, 36, 48, 60)
                 .withCostConditions(CostConditions.IN_AIR)
@@ -74,7 +74,7 @@ public class ChaosBuffsProvider implements IDataProvider {
                 .withCosts(25, 100, 200)
                 .withCostConditions(CostConditions.HURT)
         );
-        ret.add(potion(Effects.RESISTANCE, 2)
+        ret.add(potion(Effects.DAMAGE_RESISTANCE, 2)
                 .withSlots(8, 12)
                 .withCosts(10, 80, 150)
                 .withCostConditions(CostConditions.HURT)
@@ -84,12 +84,12 @@ public class ChaosBuffsProvider implements IDataProvider {
                 .withCosts(0, 100)
                 .withCostConditions(CostConditions.IN_AIR)
         );
-        ret.add(potion(Effects.SPEED, 4)
+        ret.add(potion(Effects.MOVEMENT_SPEED, 4)
                 .withSlots(4, 5, 6, 7)
                 .withCosts(0, 30, 40, 50, 60)
                 .withCostConditions(CostConditions.MOVING)
         );
-        ret.add(potion(Effects.STRENGTH, 2)
+        ret.add(potion(Effects.DAMAGE_BOOST, 2)
                 .withSlots(10, 12)
                 .withCosts(2, 150, 250)
         );
@@ -118,15 +118,15 @@ public class ChaosBuffsProvider implements IDataProvider {
     }
 
     @Override
-    public void act(DirectoryCache cache) {
+    public void run(DirectoryCache cache) {
         Path outputFolder = this.generator.getOutputFolder();
 
         for (ChaosBuffBuilder builder : getBuilders()) {
             try {
                 String jsonStr = GSON.toJson(builder.serialize());
-                String hashStr = HASH_FUNCTION.hashUnencodedChars(jsonStr).toString();
+                String hashStr = SHA1.hashUnencodedChars(jsonStr).toString();
                 Path path = outputFolder.resolve(String.format("data/%s/silentgems_chaos_buffs/%s.json", builder.buffId.getNamespace(), builder.buffId.getPath()));
-                if (!Objects.equals(cache.getPreviousHash(outputFolder), hashStr) || !Files.exists(path)) {
+                if (!Objects.equals(cache.getHash(outputFolder), hashStr) || !Files.exists(path)) {
                     Files.createDirectories(path.getParent());
 
                     try (BufferedWriter writer = Files.newBufferedWriter(path)) {
@@ -134,7 +134,7 @@ public class ChaosBuffsProvider implements IDataProvider {
                     }
                 }
 
-                cache.recordHash(path, hashStr);
+                cache.putNew(path, hashStr);
             } catch (IOException ex) {
                 LOGGER.error("Could not save chaos buffs to {}", outputFolder, ex);
             }
