@@ -1,7 +1,7 @@
 package net.silentchaos512.gemschaos.chaosbuff;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
 import java.util.Locale;
@@ -12,20 +12,20 @@ public enum CostConditions implements ICostCondition {
     BURNING(Entity::isOnFire),
 //    FREEZING(p -> p.getActivePotionEffect(GemsEffects.FREEZING.get()) != null),
 //    SHOCKING(p -> p.getActivePotionEffect(GemsEffects.SHOCKING.get()) != null),
-    FLYING(p -> p.abilities.flying),
+    FLYING(p -> p.getAbilities().flying),
     HURT(p -> p.getHealth() < p.getMaxHealth() - 0.5f),
     IN_AIR(p -> !p.isOnGround()),
     MOVING(CostConditions::hasMoved),
     UNDERWATER(Entity::isInWater);
 
-    private final Predicate<PlayerEntity> condition;
+    private final Predicate<Player> condition;
 
-    CostConditions(Predicate<PlayerEntity> condition) {
+    CostConditions(Predicate<Player> condition) {
         this.condition = condition;
     }
 
     @Override
-    public boolean test(PlayerEntity player) {
+    public boolean test(Player player) {
         return this.condition.test(player);
     }
 
@@ -44,7 +44,7 @@ public enum CostConditions implements ICostCondition {
         return null;
     }
 
-    private static boolean hasMoved(PlayerEntity player) {
+    private static boolean hasMoved(Player player) {
         // FIXME: does not work
 //        double dx = player.prevPosX - player.posX;
 //        double dz = player.prevPosZ - player.posZ;

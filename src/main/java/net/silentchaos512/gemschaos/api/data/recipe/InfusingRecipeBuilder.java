@@ -1,12 +1,12 @@
 package net.silentchaos512.gemschaos.api.data.recipe;
 
 import com.google.gson.JsonObject;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.resources.ResourceLocation;
 import net.silentchaos512.gemschaos.setup.ChaosRecipes;
 import net.silentchaos512.lib.util.NameUtils;
 
@@ -21,7 +21,7 @@ public class InfusingRecipeBuilder {
     private final Ingredient ingredient;
     private final Ingredient catalyst;
 
-    public InfusingRecipeBuilder(Ingredient ingredient, Ingredient catalyst, int chaosPerTick, int processTime, IItemProvider result, int count) {
+    public InfusingRecipeBuilder(Ingredient ingredient, Ingredient catalyst, int chaosPerTick, int processTime, ItemLike result, int count) {
         this.result = result.asItem();
         this.count = count;
         this.ingredient = ingredient;
@@ -30,16 +30,16 @@ public class InfusingRecipeBuilder {
         this.processTime = processTime;
     }
 
-    public void build(Consumer<IFinishedRecipe> consumer) {
+    public void build(Consumer<FinishedRecipe> consumer) {
         ResourceLocation itemId = NameUtils.from(this.result);
         build(consumer, new ResourceLocation(itemId.getNamespace(), "chaos_infusing/" + itemId.getPath()));
     }
 
-    public void build(Consumer<IFinishedRecipe> consumer, ResourceLocation id) {
+    public void build(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
         consumer.accept(new Result(id, this));
     }
 
-    public class Result implements IFinishedRecipe {
+    public class Result implements FinishedRecipe {
         private final ResourceLocation id;
         private final InfusingRecipeBuilder builder;
 
@@ -64,7 +64,7 @@ public class InfusingRecipeBuilder {
         }
 
         @Override
-        public IRecipeSerializer<?> getType() {
+        public RecipeSerializer<?> getType() {
             return ChaosRecipes.INFUSING.get();
         }
 

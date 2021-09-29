@@ -1,20 +1,20 @@
 package net.silentchaos512.gemschaos.chaos;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.IServerWorldInfo;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,7 +38,7 @@ public final class ChaosEvents {
     private static final Map<ResourceLocation, ForgeConfigSpec.BooleanValue> EVENT_CONFIGS = new HashMap<>();
     private static final Map<UUID, Map<ResourceLocation, Integer>> COOLDOWN_TIMERS = new HashMap<>();
 
-    private static final Queue<Supplier<LightningBoltEntity>> LIGHTNING_QUEUE = new ArrayDeque<>();
+    private static final Queue<Supplier<LightningBolt>> LIGHTNING_QUEUE = new ArrayDeque<>();
     private static final int LIGHTNING_TICK_FREQUENCY = 10;
     private static int tickTimer = 0;
 
@@ -88,7 +88,7 @@ public final class ChaosEvents {
         EVENTS.put(id, event);
     }
 
-    static void tryChaosEvents(PlayerEntity player, World world, int chaos) {
+    static void tryChaosEvents(Player player, Level world, int chaos) {
         if (player == null || !player.isAlive() || (ChaosConfig.Common.chaosNoEventsUntilHasBed.get() && !hasBed(player)))
             return;
 
@@ -117,7 +117,7 @@ public final class ChaosEvents {
         return time;
     }
 
-    private static boolean hasBed(PlayerEntity player) {
+    private static boolean hasBed(Player player) {
         return player.getSleepingPos().isPresent();
     }
 
@@ -131,7 +131,7 @@ public final class ChaosEvents {
      * @param eventId The event ID
      * @param player  The player to target
      */
-    public static void triggerEvent(ResourceLocation eventId, PlayerEntity player) {
+    public static void triggerEvent(ResourceLocation eventId, Player player) {
         ChaosMod.LOGGER.debug("Triggering event {}", eventId);
         player.getCapability(ChaosSourceCapability.INSTANCE).ifPresent(source -> {
             ChaosEvent event = EVENTS.get(eventId);
@@ -172,30 +172,30 @@ public final class ChaosEvents {
 
         ++tickTimer;
         if (!LIGHTNING_QUEUE.isEmpty() && tickTimer % LIGHTNING_TICK_FREQUENCY == 0) {
-            LightningBoltEntity bolt = LIGHTNING_QUEUE.remove().get();
+            LightningBolt bolt = LIGHTNING_QUEUE.remove().get();
             bolt.level.addFreshEntity(bolt);
         }
     }
 
-    private static boolean spawnLightningBolt(Entity entity, World world) {
-        if (world instanceof ServerWorld && canSpawnLightningIn(world.dimension())) {
+    private static boolean spawnLightningBolt(Entity entity, Level world) {
+        if (world instanceof ServerLevel && canSpawnLightningIn(world.dimension())) {
             double posX = entity.getX() + MathUtils.nextIntInclusive(-64, 64);
             double posZ = entity.getZ() + MathUtils.nextIntInclusive(-64, 64);
-            int height = world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) posX, (int) posZ);
-            LightningBoltEntity bolt = new LightningBoltEntity(EntityType.LIGHTNING_BOLT, world);
-            bolt.moveTo(new Vector3d(posX, height, posZ));
+            int height = world.getHeight(Heightmap.Types.MOTION_BLOCKING, (int) posX, (int) posZ);
+            LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, world);
+            bolt.moveTo(new Vec3(posX, height, posZ));
             world.addFreshEntity(bolt);
             return true;
         }
         return false;
     }
 
-    private static boolean spawnChaosLightningBolts(Entity entity, World world, int count) {
-        if (world instanceof ServerWorld && canSpawnLightningIn(world.dimension())) {
+    private static boolean spawnChaosLightningBolts(Entity entity, Level world, int count) {
+        if (world instanceof ServerLevel && canSpawnLightningIn(world.dimension())) {
             for (int i = 0; i < count; ++i) {
                 double posX = entity.getX() + MathUtils.nextIntInclusive(-64, 64);
                 double posZ = entity.getZ() + MathUtils.nextIntInclusive(-64, 64);
-                int height = world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) posX, (int) posZ);
+                int height = world.getHeight(Heightmap.Types.MOTION_BLOCKING, (int) posX, (int) posZ);
 //                LIGHTNING_QUEUE.add(() -> new ChaosLightningBoltEntity(world, posX, height, posZ)); // FIXME: re-add entity
             }
             return true;
@@ -203,8 +203,8 @@ public final class ChaosEvents {
         return false;
     }
 
-    private static boolean canSpawnLightningIn(RegistryKey<World> dimension) {
-        return dimension != World.NETHER && dimension != World.END;
+    private static boolean canSpawnLightningIn(ResourceKey<Level> dimension) {
+        return dimension != Level.NETHER && dimension != Level.END;
     }
 
     /*private static boolean corruptBlocks(Entity entity, World world) {
@@ -245,11 +245,11 @@ public final class ChaosEvents {
         }
     }*/
 
-    private static boolean setThunderstorm(World world, int time) {
-        if (!world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) || world.getLevelData().isThundering() || !(world instanceof ServerWorld))
+    private static boolean setThunderstorm(Level world, int time) {
+        if (!world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) || world.getLevelData().isThundering() || !(world instanceof ServerLevel))
             return false;
 
-        IServerWorldInfo info = ((ServerWorld) world).getServer().getWorldData().overworldData();
+        ServerLevelData info = ((ServerLevel) world).getServer().getWorldData().overworldData();
         //info.setClearWeatherTime(0);
         info.setRainTime(time);
         info.setThunderTime(time);
@@ -258,17 +258,17 @@ public final class ChaosEvents {
         return true;
     }
 
-    private static boolean applyChaosSickness(PlayerEntity player, Integer chaos) {
+    private static boolean applyChaosSickness(Player player, Integer chaos) {
         //player.addPotionEffect(new EffectInstance(GemsEffects.CHAOS_SICKNESS.get(), TimeUtils.ticksFromMinutes(10))); // FIXME: re-add effect
-        player.addEffect(new EffectInstance(Effects.DIG_SLOWDOWN, TimeUtils.ticksFromMinutes(5)));
+        player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, TimeUtils.ticksFromMinutes(5)));
         if (chaos > 2_000_000)
-            player.addEffect(new EffectInstance(Effects.HUNGER, TimeUtils.ticksFromMinutes(5)));
+            player.addEffect(new MobEffectInstance(MobEffects.HUNGER, TimeUtils.ticksFromMinutes(5)));
         if (chaos > 4_000_000)
-            player.addEffect(new EffectInstance(Effects.WEAKNESS, TimeUtils.ticksFromMinutes(5)));
+            player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, TimeUtils.ticksFromMinutes(5)));
         return true;
     }
 
-    public static List<String> getCooldownTimersDebugText(PlayerEntity player) {
+    public static List<String> getCooldownTimersDebugText(Player player) {
         if (player == null || !COOLDOWN_TIMERS.containsKey(player.getUUID()))
             return ImmutableList.of();
 

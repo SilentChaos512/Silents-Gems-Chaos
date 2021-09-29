@@ -1,22 +1,22 @@
 package net.silentchaos512.gemschaos.data.chaosbuff;
 
 import com.google.gson.JsonObject;
-import net.minecraft.potion.Effect;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.resources.ResourceLocation;
 import net.silentchaos512.gemschaos.chaosbuff.PotionChaosBuff;
 import net.silentchaos512.lib.util.NameUtils;
 
 public class PotionBuffBuilder extends ChaosBuffBuilder {
-    private final Effect effect;
+    private final MobEffect effect;
     private int effectDuration = -1;
 
-    public PotionBuffBuilder(ResourceLocation buffId, int maxLevel, Effect effect) {
+    public PotionBuffBuilder(ResourceLocation buffId, int maxLevel, MobEffect effect) {
         super(buffId, maxLevel, PotionChaosBuff.SERIALIZER);
         this.effect = effect;
         this.displayName = effect.getDisplayName();
     }
 
-    public static PotionBuffBuilder builder(ResourceLocation buffId, int maxLevel, Effect effect) {
+    public static PotionBuffBuilder builder(ResourceLocation buffId, int maxLevel, MobEffect effect) {
         return new PotionBuffBuilder(buffId, maxLevel, effect);
     }
 

@@ -1,7 +1,7 @@
 package net.silentchaos512.gemschaos.api.chaos;
 
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import net.silentchaos512.gemschaos.ChaosMod;
 
 import java.util.Locale;
@@ -30,12 +30,12 @@ public enum ChaosEmissionRate {
         return EXTREME;
     }
 
-    public IFormattableTextComponent getDisplayName() {
+    public MutableComponent getDisplayName() {
         String name = name().toLowerCase(Locale.ROOT);
         return translate("emissionRate." + name);
     }
 
-    public IFormattableTextComponent getDisplayName(int chaos) {
+    public MutableComponent getDisplayName(int chaos) {
         if (this == NONE || this == MINIMAL) {
             return getDisplayName();
         }
@@ -44,26 +44,26 @@ public enum ChaosEmissionRate {
         int diff = this.maxValue - previous.maxValue;
 
         if (chaos > (previous.maxValue + 2 * diff / 3)) {
-            ITextComponent text = translate("emissionRate.plus2");
+            Component text = translate("emissionRate.plus2");
             return getDisplayName().append(text);
         }
         if (chaos > (previous.maxValue + diff / 3)) {
-            ITextComponent text = translate("emissionRate.plus1");
+            Component text = translate("emissionRate.plus1");
             return getDisplayName().append(text);
         }
 
         return getDisplayName();
     }
 
-    public ITextComponent getEmissionText() {
+    public Component getEmissionText() {
         return translate("emission", getDisplayName());
     }
 
-    public ITextComponent getEmissionText(int chaos) {
+    public Component getEmissionText(int chaos) {
         return translate("emission", getDisplayName(chaos));
     }
 
-    private static IFormattableTextComponent translate(String key, Object... params) {
+    private static MutableComponent translate(String key, Object... params) {
         return ChaosMod.TEXT.translate("chaos", key, params);
     }
 }

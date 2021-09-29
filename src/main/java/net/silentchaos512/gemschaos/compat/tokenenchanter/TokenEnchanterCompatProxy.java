@@ -1,8 +1,8 @@
 package net.silentchaos512.gemschaos.compat.tokenenchanter;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 final class TokenEnchanterCompatProxy {
     private TokenEnchanterCompatProxy() {}
 
-    static ICapabilityProvider getChaosXpStorageProvider(ItemStack stack, @Nullable CompoundNBT nbt) {
+    static ICapabilityProvider getChaosXpStorageProvider(ItemStack stack, @Nullable CompoundTag nbt) {
         return new ICapabilityProvider() {
             @Nonnull
             @Override

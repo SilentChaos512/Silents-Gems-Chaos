@@ -3,11 +3,11 @@ package net.silentchaos512.gemschaos.data.chaosbuff;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.resources.ResourceLocation;
 import net.silentchaos512.gemschaos.chaosbuff.CostConditions;
 import net.silentchaos512.lib.util.NameUtils;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
-public class ChaosBuffsProvider implements IDataProvider {
+public class ChaosBuffsProvider implements DataProvider {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
 
@@ -36,64 +36,64 @@ public class ChaosBuffsProvider implements IDataProvider {
     protected Collection<ChaosBuffBuilder> getBuilders() {
         Collection<ChaosBuffBuilder> ret = new ArrayList<>();
 
-        ret.add(potion(Effects.DOLPHINS_GRACE, 1)
+        ret.add(potion(MobEffects.DOLPHINS_GRACE, 1)
                 .withSlots(5)
                 .withCosts(5, 100)
                 .withCostConditions(CostConditions.UNDERWATER)
         );
-        ret.add(potion(Effects.FIRE_RESISTANCE, 1)
+        ret.add(potion(MobEffects.FIRE_RESISTANCE, 1)
                 .withSlots(8)
                 .withCosts(5, 200)
                 .withCostConditions(CostConditions.BURNING)
         );
-        ret.add(potion(Effects.DIG_SPEED, 2)
+        ret.add(potion(MobEffects.DIG_SPEED, 2)
                 .withSlots(4, 6)
                 .withCosts(3, 50, 60, 80, 100)
         );
-        ret.add(potion(Effects.INVISIBILITY, 1)
+        ret.add(potion(MobEffects.INVISIBILITY, 1)
                 .withEffectDuration(410)
                 .withSlots(6)
                 .withCosts(0, 80)
         );
-        ret.add(potion(Effects.JUMP, 4)
+        ret.add(potion(MobEffects.JUMP, 4)
                 .withSlots(4, 5, 6, 7)
                 .withCosts(0, 30, 36, 48, 60)
                 .withCostConditions(CostConditions.IN_AIR)
         );
-        ret.add(potion(Effects.LEVITATION, 4)
+        ret.add(potion(MobEffects.LEVITATION, 4)
                 .withSlots(4, 5, 6, 7)
                 .withCosts(0, 35, 45, 55, 65)
         );
-        ret.add(potion(Effects.NIGHT_VISION, 1)
+        ret.add(potion(MobEffects.NIGHT_VISION, 1)
                 .withEffectDuration(410)
                 .withSlots(2)
                 .withCosts(0, 30)
         );
-        ret.add(potion(Effects.REGENERATION, 2)
+        ret.add(potion(MobEffects.REGENERATION, 2)
                 .withSlots(8, 12)
                 .withCosts(25, 100, 200)
                 .withCostConditions(CostConditions.HURT)
         );
-        ret.add(potion(Effects.DAMAGE_RESISTANCE, 2)
+        ret.add(potion(MobEffects.DAMAGE_RESISTANCE, 2)
                 .withSlots(8, 12)
                 .withCosts(10, 80, 150)
                 .withCostConditions(CostConditions.HURT)
         );
-        ret.add(potion(Effects.SLOW_FALLING, 1)
+        ret.add(potion(MobEffects.SLOW_FALLING, 1)
                 .withSlots(5)
                 .withCosts(0, 100)
                 .withCostConditions(CostConditions.IN_AIR)
         );
-        ret.add(potion(Effects.MOVEMENT_SPEED, 4)
+        ret.add(potion(MobEffects.MOVEMENT_SPEED, 4)
                 .withSlots(4, 5, 6, 7)
                 .withCosts(0, 30, 40, 50, 60)
                 .withCostConditions(CostConditions.MOVING)
         );
-        ret.add(potion(Effects.DAMAGE_BOOST, 2)
+        ret.add(potion(MobEffects.DAMAGE_BOOST, 2)
                 .withSlots(10, 12)
                 .withCosts(2, 150, 250)
         );
-        ret.add(potion(Effects.WATER_BREATHING, 1)
+        ret.add(potion(MobEffects.WATER_BREATHING, 1)
                 .withSlots(6)
                 .withCosts(0, 80)
                 .withCostConditions(CostConditions.UNDERWATER)
@@ -102,7 +102,7 @@ public class ChaosBuffsProvider implements IDataProvider {
         return ret;
     }
 
-    private PotionBuffBuilder potion(Effect effect, int maxLevel) {
+    private PotionBuffBuilder potion(MobEffect effect, int maxLevel) {
         ResourceLocation effectId = NameUtils.from(effect);
         String path = effectId.getNamespace() + "." + effectId.getPath();
         return PotionBuffBuilder.builder(modId(path), maxLevel, effect);
@@ -118,7 +118,7 @@ public class ChaosBuffsProvider implements IDataProvider {
     }
 
     @Override
-    public void run(DirectoryCache cache) {
+    public void run(HashCache cache) {
         Path outputFolder = this.generator.getOutputFolder();
 
         for (ChaosBuffBuilder builder : getBuilders()) {

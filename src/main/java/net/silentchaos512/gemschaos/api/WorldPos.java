@@ -1,18 +1,18 @@
 package net.silentchaos512.gemschaos.api;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class WorldPos {
-    private final World world;
+    private final Level world;
     private final BlockPos pos;
 
-    public WorldPos(World world, BlockPos pos) {
+    public WorldPos(Level world, BlockPos pos) {
         this.world = world;
         this.pos = pos;
     }
 
-    public World getWorld() {
+    public Level getWorld() {
         return world;
     }
 

@@ -1,8 +1,8 @@
 package net.silentchaos512.gemschaos.setup;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.item.Item;
-import net.minecraft.item.Rarity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.silentchaos512.gems.util.Gems;
 import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.gemschaos.item.*;

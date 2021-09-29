@@ -1,6 +1,6 @@
 package net.silentchaos512.gemschaos.api.pedestal;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.silentchaos512.gemschaos.api.WorldPos;
 import net.silentchaos512.lib.util.TriFunction;
 

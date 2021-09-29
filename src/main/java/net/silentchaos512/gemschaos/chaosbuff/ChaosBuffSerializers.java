@@ -2,9 +2,9 @@ package net.silentchaos512.gemschaos.chaosbuff;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.silentchaos512.gemschaos.ChaosMod;
 
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public final class ChaosBuffSerializers {
     }
 
     public static IChaosBuff deserialize(ResourceLocation id, JsonObject json) {
-        String typeStr = JSONUtils.getAsString(json, "type");
+        String typeStr = GsonHelper.getAsString(json, "type");
         ResourceLocation type = ChaosMod.getIdWithDefaultNamespace(typeStr);
 
         IChaosBuffSerializer<?> serializer = REGISTRY.get(type);
@@ -39,7 +39,7 @@ public final class ChaosBuffSerializers {
         return serializer.deserialize(id, json);
     }
 
-    public static IChaosBuff read(PacketBuffer buffer) {
+    public static IChaosBuff read(FriendlyByteBuf buffer) {
         ResourceLocation id = buffer.readResourceLocation();
         ResourceLocation type = buffer.readResourceLocation();
         IChaosBuffSerializer<?> serializer = REGISTRY.get(type);
@@ -50,7 +50,7 @@ public final class ChaosBuffSerializers {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends IChaosBuff> void write(T buff, PacketBuffer buffer) {
+    public static <T extends IChaosBuff> void write(T buff, FriendlyByteBuf buffer) {
         buffer.writeResourceLocation(buff.getId());
         buffer.writeResourceLocation(buff.getSerializer().getName());
         IChaosBuffSerializer<T> serializer = (IChaosBuffSerializer<T>) buff.getSerializer();

@@ -2,15 +2,22 @@ package net.silentchaos512.gemschaos.data;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.LootTableProvider;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.loot.*;
-import net.minecraft.loot.functions.ApplyBonus;
-import net.minecraft.loot.functions.SetCount;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootTables;
+import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.silentchaos512.gemschaos.setup.ChaosBlocks;
 import net.silentchaos512.gemschaos.setup.ChaosItems;
 import net.silentchaos512.gemschaos.setup.ChaosRegistration;
@@ -28,31 +35,31 @@ public class ChaosLootTableProvider extends LootTableProvider {
     }
 
     @Override
-    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables() {
+    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
         return ImmutableList.of(
-                Pair.of(BlockLootTables::new, LootParameterSets.BLOCK)
+                Pair.of(BlockLootTables::new, LootContextParamSets.BLOCK)
         );
     }
 
     @Override
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {
-        map.forEach((p_218436_2_, p_218436_3_) -> LootTableManager.validate(validationtracker, p_218436_2_, p_218436_3_));
+    protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker) {
+        map.forEach((p_218436_2_, p_218436_3_) -> LootTables.validate(validationtracker, p_218436_2_, p_218436_3_));
     }
 
-    private static final class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
+    private static final class BlockLootTables extends net.minecraft.data.loot.BlockLoot {
         @Override
         protected void addTables() {
             this.add(ChaosBlocks.CHAOS_ORE.get(), block ->
-                    createSilkTouchDispatchTable(block, applyExplosionDecay(block, ItemLootEntry.lootTableItem(ChaosItems.CHAOS_CRYSTAL)
-                            .apply(SetCount.setCount(RandomValueRange.between(3, 4)))
-                            .apply(ApplyBonus.addUniformBonusCount(Enchantments.BLOCK_FORTUNE)))));
+                    createSilkTouchDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(ChaosItems.CHAOS_CRYSTAL)
+                            .apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 4)))
+                            .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE)))));
 
             dropSelf(ChaosBlocks.CHAOS_CRYSTAL_BLOCK.get());
 
             add(ChaosBlocks.CORRUPTED_STONE.get(), b ->
-                    createSingleItemTableWithSilkTouch(b, ChaosItems.CORRUPTED_STONE_PILE, ConstantRange.exactly(4)));
+                    createSingleItemTableWithSilkTouch(b, ChaosItems.CORRUPTED_STONE_PILE, ConstantValue.exactly(4)));
             add(ChaosBlocks.CORRUPTED_DIRT.get(), b ->
-                    createSingleItemTableWithSilkTouch(b, ChaosItems.CORRUPTED_DIRT_PILE, ConstantRange.exactly(4)));
+                    createSingleItemTableWithSilkTouch(b, ChaosItems.CORRUPTED_DIRT_PILE, ConstantValue.exactly(4)));
         }
 
         @Override

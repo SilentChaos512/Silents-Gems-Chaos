@@ -4,13 +4,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.utils.Color;
 import net.silentchaos512.utils.EnumUtils;
@@ -24,7 +24,7 @@ public class SimpleChaosBuff implements IChaosBuff {
     static final Serializer<SimpleChaosBuff> SERIALIZER = new Serializer<>(Serializer.NAME, SimpleChaosBuff::new);
 
     private final ResourceLocation id;
-    ITextComponent displayName;
+    Component displayName;
     int maxLevel;
     int[] slotsByLevel;
     int inactiveCost;
@@ -41,17 +41,17 @@ public class SimpleChaosBuff implements IChaosBuff {
     }
 
     @Override
-    public void applyTo(PlayerEntity player, int level) { }
+    public void applyTo(Player player, int level) { }
 
     @Override
-    public void removeFrom(PlayerEntity player) { }
+    public void removeFrom(Player player) { }
 
     @Override
-    public int getChaosGenerated(@Nullable PlayerEntity player, int level) {
+    public int getChaosGenerated(@Nullable Player player, int level) {
         if (player != null && !this.isActive(player) || this.activeCostByLevel.length == 0) {
             return this.inactiveCost;
         }
-        int clamp = MathHelper.clamp(level, 0, this.activeCostByLevel.length - 1);
+        int clamp = Mth.clamp(level, 0, this.activeCostByLevel.length - 1);
         return this.activeCostByLevel[clamp];
     }
 
@@ -65,12 +65,12 @@ public class SimpleChaosBuff implements IChaosBuff {
         if (this.slotsByLevel.length == 0) {
             return 0;
         }
-        int clamp = MathHelper.clamp(level, 0, this.slotsByLevel.length - 1);
+        int clamp = Mth.clamp(level, 0, this.slotsByLevel.length - 1);
         return this.slotsByLevel[clamp];
     }
 
     @Override
-    public boolean isActive(PlayerEntity player) {
+    public boolean isActive(Player player) {
         for (CostConditions c : costConditions) {
             if (c != null && !c.test(player)) {
                 return false;
@@ -80,13 +80,13 @@ public class SimpleChaosBuff implements IChaosBuff {
     }
 
     @Override
-    public ITextComponent getDisplayName(int level) {
+    public Component getDisplayName(int level) {
         if (level < 1) {
             return displayName;
         }
         return displayName.copy()
                 .append(" ")
-                .append(new TranslationTextComponent("enchantment.level." + level));
+                .append(new TranslatableComponent("enchantment.level." + level));
     }
 
     @Override
@@ -105,8 +105,8 @@ public class SimpleChaosBuff implements IChaosBuff {
         private final ResourceLocation serializerId;
         private final Function<ResourceLocation, T> factory;
         @Nullable private final BiConsumer<T, JsonObject> readJson;
-        @Nullable private final BiConsumer<T, PacketBuffer> readBuffer;
-        @Nullable private final BiConsumer<T, PacketBuffer> writeBuffer;
+        @Nullable private final BiConsumer<T, FriendlyByteBuf> readBuffer;
+        @Nullable private final BiConsumer<T, FriendlyByteBuf> writeBuffer;
 
         public Serializer(ResourceLocation serializerId, Function<ResourceLocation, T> factory) {
             this(serializerId, factory, null, null, null);
@@ -115,8 +115,8 @@ public class SimpleChaosBuff implements IChaosBuff {
         public Serializer(ResourceLocation serializerId,
                           Function<ResourceLocation, T> factory,
                           @Nullable BiConsumer<T, JsonObject> readJson,
-                          @Nullable BiConsumer<T, PacketBuffer> readBuffer,
-                          @Nullable BiConsumer<T, PacketBuffer> writeBuffer) {
+                          @Nullable BiConsumer<T, FriendlyByteBuf> readBuffer,
+                          @Nullable BiConsumer<T, FriendlyByteBuf> writeBuffer) {
             this.serializerId = serializerId;
             this.factory = factory;
             this.readJson = readJson;
@@ -127,8 +127,8 @@ public class SimpleChaosBuff implements IChaosBuff {
         @Override
         public T deserialize(ResourceLocation id, JsonObject json) {
             T buff = factory.apply(id);
-            buff.maxLevel = JSONUtils.getAsInt(json, "maxLevel", 1);
-            buff.displayName = ITextComponent.Serializer.fromJson(json.get("displayName"));
+            buff.maxLevel = GsonHelper.getAsInt(json, "maxLevel", 1);
+            buff.displayName = Component.Serializer.fromJson(json.get("displayName"));
 
             readSlots(buff, json);
             readCost(buff, json.get("cost"));
@@ -159,7 +159,7 @@ public class SimpleChaosBuff implements IChaosBuff {
             }
             JsonObject json = jsonElement.getAsJsonObject();
 
-            buff.inactiveCost = JSONUtils.getAsInt(json, "inactive", 0);
+            buff.inactiveCost = GsonHelper.getAsInt(json, "inactive", 0);
 
             JsonElement elem = json.get("active");
             if (elem == null) {
@@ -194,9 +194,9 @@ public class SimpleChaosBuff implements IChaosBuff {
         }
 
         @Override
-        public T read(ResourceLocation id, PacketBuffer buffer) {
+        public T read(ResourceLocation id, FriendlyByteBuf buffer) {
             T buff = factory.apply(id);
-            ITextComponent displayName = buffer.readComponent();
+            Component displayName = buffer.readComponent();
             buff.displayName = displayName.copy();
             buff.maxLevel = buffer.readByte();
             buff.slotsByLevel = buffer.readVarIntArray();
@@ -215,7 +215,7 @@ public class SimpleChaosBuff implements IChaosBuff {
         }
 
         @Override
-        public void write(PacketBuffer buffer, T buff) {
+        public void write(FriendlyByteBuf buffer, T buff) {
             buffer.writeComponent(buff.displayName);
             buffer.writeByte(buff.maxLevel);
             buffer.writeVarIntArray(buff.slotsByLevel);

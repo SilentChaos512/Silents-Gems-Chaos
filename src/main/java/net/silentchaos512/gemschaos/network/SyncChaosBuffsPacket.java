@@ -1,6 +1,6 @@
 package net.silentchaos512.gemschaos.network;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.silentchaos512.gems.network.LoginPacket;
 import net.silentchaos512.gemschaos.chaosbuff.ChaosBuffManager;
 import net.silentchaos512.gemschaos.chaosbuff.ChaosBuffSerializers;
@@ -21,7 +21,7 @@ public class SyncChaosBuffsPacket extends LoginPacket {
         this.buffs = new ArrayList<>(buffsIn);
     }
 
-    public static SyncChaosBuffsPacket fromBytes(PacketBuffer buffer) {
+    public static SyncChaosBuffsPacket fromBytes(FriendlyByteBuf buffer) {
         SyncChaosBuffsPacket packet = new SyncChaosBuffsPacket();
         packet.buffs = new ArrayList<>();
         int count = buffer.readVarInt();
@@ -33,7 +33,7 @@ public class SyncChaosBuffsPacket extends LoginPacket {
         return packet;
     }
 
-    public void toBytes(PacketBuffer buffer) {
+    public void toBytes(FriendlyByteBuf buffer) {
         buffer.writeVarInt(this.buffs.size());
         this.buffs.forEach(buff -> ChaosBuffSerializers.write(buff, buffer));
     }

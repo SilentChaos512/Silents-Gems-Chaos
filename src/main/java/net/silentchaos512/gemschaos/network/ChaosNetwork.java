@@ -1,9 +1,9 @@
 package net.silentchaos512.gemschaos.network;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.FMLHandshakeHandler;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.FMLHandshakeHandler;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 import net.silentchaos512.gems.network.LoginPacket;
 import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.gemschaos.chaosbuff.ChaosBuffManager;

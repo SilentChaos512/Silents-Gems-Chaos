@@ -1,15 +1,15 @@
 package net.silentchaos512.gemschaos.setup;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -26,19 +26,16 @@ public final class ChaosBlocks {
     private static final Collection<BlockRegistryObject<? extends Block>> SIMPLE_BLOCKS = new ArrayList<>();
 
     public static final BlockRegistryObject<Block> CHAOS_ORE = registerSimple("chaos_ore", () ->
-            new Block(AbstractBlock.Properties.of(Material.STONE)
-                    .strength(4, 20)
-                    .harvestLevel(3)
-                    .requiresCorrectToolForDrops()
-            ) {
-                @Override
-                public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silkTouch) {
-                    return silkTouch == 0 ? MathHelper.nextInt(RANDOM, 2, 7) : 0;
-                }
-            });
+            getChaosOre(BlockBehaviour.Properties.of(Material.STONE)
+                    .strength(4, 10)
+                    .requiresCorrectToolForDrops()));
+    public static final BlockRegistryObject<Block> DEEPSLATE_CHAOS_ORE = registerSimple("deepslate_chaos_ore", () ->
+            getChaosOre(BlockBehaviour.Properties.copy(CHAOS_ORE.get())
+                    .strength(5, 15)
+                    .sound(SoundType.DEEPSLATE)));
 
     public static final BlockRegistryObject<Block> CHAOS_CRYSTAL_BLOCK = registerSimple("chaos_crystal_block", () ->
-            new Block(AbstractBlock.Properties.of(Material.METAL)
+            new Block(BlockBehaviour.Properties.of(Material.METAL)
                     .strength(4, 30)
                     .sound(SoundType.METAL)));
 
@@ -58,7 +55,7 @@ public final class ChaosBlocks {
     }
 
     private static Block createCorruptedBlock() {
-        return new Block(AbstractBlock.Properties.of(Material.CLAY)
+        return new Block(BlockBehaviour.Properties.of(Material.CLAY)
                 .strength(1)
                 .sound(SoundType.GRAVEL)
                 .lightLevel(state -> 7));
@@ -86,5 +83,14 @@ public final class ChaosBlocks {
 
     private static <T extends Block> Supplier<BlockItem> defaultItem(BlockRegistryObject<T> block) {
         return () -> new BlockItem(block.get(), new Item.Properties().tab(ChaosMod.ITEM_GROUP));
+    }
+
+    private static Block getChaosOre(final BlockBehaviour.Properties properties) {
+        return new Block(properties) {
+            @Override
+            public int getExpDrop(BlockState state, LevelReader world, BlockPos pos, int fortune, int silkTouch) {
+                return silkTouch == 0 ? Mth.nextInt(RANDOM, 2, 7) : 0;
+            }
+        };
     }
 }

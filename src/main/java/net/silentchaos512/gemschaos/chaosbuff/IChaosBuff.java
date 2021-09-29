@@ -1,19 +1,19 @@
 package net.silentchaos512.gemschaos.chaosbuff;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nullable;
 
 public interface IChaosBuff {
     ResourceLocation getId();
 
-    void applyTo(PlayerEntity player, int level);
+    void applyTo(Player player, int level);
 
-    void removeFrom(PlayerEntity player);
+    void removeFrom(Player player);
 
-    int getChaosGenerated(@Nullable PlayerEntity player, int level);
+    int getChaosGenerated(@Nullable Player player, int level);
 
     default int getActiveChaosGenerated(int level) {
         return getChaosGenerated(null, level);
@@ -23,9 +23,9 @@ public interface IChaosBuff {
 
     int getSlotsForLevel(int level);
 
-    boolean isActive(PlayerEntity player);
+    boolean isActive(Player player);
 
-    ITextComponent getDisplayName(int level);
+    Component getDisplayName(int level);
 
     int getRuneColor();
 

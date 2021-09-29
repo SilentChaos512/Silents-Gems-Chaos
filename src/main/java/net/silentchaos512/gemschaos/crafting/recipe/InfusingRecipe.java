@@ -1,15 +1,17 @@
 package net.silentchaos512.gemschaos.crafting.recipe;
 
 import com.google.gson.JsonObject;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SingleItemRecipe;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.silentchaos512.gemschaos.setup.ChaosRecipes;
@@ -25,7 +27,7 @@ public class InfusingRecipe extends SingleItemRecipe {
     }
 
     @Override
-    public boolean matches(IInventory inv, World worldIn) {
+    public boolean matches(Container inv, Level worldIn) {
         ItemStack inputItem = inv.getItem(0);
         ItemStack catalystItem = inv.getItem(1);
         return this.ingredient.test(inputItem) && this.catalyst.test(catalystItem);
@@ -60,24 +62,24 @@ public class InfusingRecipe extends SingleItemRecipe {
         return true;
     }
 
-    public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<InfusingRecipe> {
+    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<InfusingRecipe> {
         @Override
         public InfusingRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
             Ingredient ingredient = Ingredient.fromJson(json.get("ingredient"));
             Ingredient catalyst = Ingredient.fromJson(json.get("catalyst"));
 
-            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(JSONUtils.getAsString(json, "result")));
-            int count = JSONUtils.getAsInt(json, "count", 1);
+            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(json, "result")));
+            int count = GsonHelper.getAsInt(json, "count", 1);
             ItemStack resultStack = new ItemStack(item, count);
 
             InfusingRecipe recipe = new InfusingRecipe(recipeId, ingredient, catalyst, resultStack);
-            recipe.chaosPerTick = JSONUtils.getAsInt(json, "chaosPerTick", recipe.chaosPerTick);
-            recipe.processTime = JSONUtils.getAsInt(json, "processTime", recipe.processTime);
+            recipe.chaosPerTick = GsonHelper.getAsInt(json, "chaosPerTick", recipe.chaosPerTick);
+            recipe.processTime = GsonHelper.getAsInt(json, "processTime", recipe.processTime);
             return recipe;
         }
 
         @Override
-        public InfusingRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+        public InfusingRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
             Ingredient ingredient = Ingredient.fromNetwork(buffer);
             Ingredient catalyst = Ingredient.fromNetwork(buffer);
             ItemStack result = buffer.readItem();
@@ -88,7 +90,7 @@ public class InfusingRecipe extends SingleItemRecipe {
         }
 
         @Override
-        public void toNetwork(PacketBuffer buffer, InfusingRecipe recipe) {
+        public void toNetwork(FriendlyByteBuf buffer, InfusingRecipe recipe) {
             recipe.ingredient.toNetwork(buffer);
             recipe.catalyst.toNetwork(buffer);
             buffer.writeItem(recipe.result);

@@ -1,27 +1,27 @@
 package net.silentchaos512.gemschaos.item;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
 import net.silentchaos512.gemschaos.ChaosMod;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item.Properties;
 
 public class ChaosOrbItem extends Item {
     public static final ResourceLocation CRACK_STAGE = ChaosMod.getId("crack_stage");
@@ -51,7 +51,7 @@ public class ChaosOrbItem extends Item {
         int crackStage = getCrackStage(stack);
 
         // Absorb chaos amount minus leakage, destroy if durability depleted
-        if (stack.hurt(toAbsorb, entity.getRandom(), entity instanceof ServerPlayerEntity ? (ServerPlayerEntity) entity : null)) {
+        if (stack.hurt(toAbsorb, entity.getRandom(), entity instanceof ServerPlayer ? (ServerPlayer) entity : null)) {
             destroyOrb(entity, stack);
         }
 
@@ -66,7 +66,7 @@ public class ChaosOrbItem extends Item {
         return amount - toAbsorb;
     }
 
-    public static int absorbChaos(IWorld world, BlockPos pos, ItemStack stack, int amount) {
+    public static int absorbChaos(LevelAccessor world, BlockPos pos, ItemStack stack, int amount) {
         if (!(stack.getItem() instanceof ChaosOrbItem)) return 0;
 
         ChaosOrbItem item = (ChaosOrbItem) stack.getItem();
@@ -100,11 +100,11 @@ public class ChaosOrbItem extends Item {
 
     private static void destroyOrb(LivingEntity entity, ItemStack stack) {
         // Display name will be Air after we shrink, so get it now
-        ITextComponent displayName = stack.getHoverName();
+        Component displayName = stack.getHoverName();
 //        entity.renderBrokenItemStack(stack);
         entity.level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ITEM_BREAK, entity.getSoundSource(), 0.8F, 0.8F + entity.level.random.nextFloat() * 0.4F, false);
-        if (entity instanceof PlayerEntity) {
-            ((PlayerEntity) entity).awardStat(Stats.ITEM_BROKEN.get(stack.getItem()));
+        if (entity instanceof Player) {
+            ((Player) entity).awardStat(Stats.ITEM_BROKEN.get(stack.getItem()));
         }
         destroyOrb(entity.level, entity.blockPosition(), stack);
 
@@ -113,18 +113,18 @@ public class ChaosOrbItem extends Item {
         entity.sendMessage(ChaosMod.TEXT.translate("item", "chaos_orb.break", displayName, piecesFormatted), Util.NIL_UUID);
     }
 
-    private static void destroyOrb(IWorld world, BlockPos pos, ItemStack stack) {
+    private static void destroyOrb(LevelAccessor world, BlockPos pos, ItemStack stack) {
         stack.shrink(1);
         stack.setDamageValue(0);
         playBreakSound(world, pos);
     }
 
-    private static void playCrackSound(IWorld world, BlockPos pos) {
-        world.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundCategory.AMBIENT, 0.6f, 1.5f);
+    private static void playCrackSound(LevelAccessor world, BlockPos pos) {
+        world.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.AMBIENT, 0.6f, 1.5f);
     }
 
-    private static void playBreakSound(IWorld world, BlockPos pos) {
-        world.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundCategory.AMBIENT, 0.7f, -2.5f);
+    private static void playBreakSound(LevelAccessor world, BlockPos pos) {
+        world.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.AMBIENT, 0.7f, -2.5f);
     }
 
     public static int getChaosAbsorbed(ItemStack stack) {
@@ -136,11 +136,11 @@ public class ChaosOrbItem extends Item {
 
         ChaosOrbItem item = (ChaosOrbItem) stack.getItem();
         float ratio = (float) getChaosAbsorbed(stack) / item.maxAbsorb;
-        return MathHelper.clamp((int) (ratio * (item.crackStages + 1)), 0, item.crackStages);
+        return Mth.clamp((int) (ratio * (item.crackStages + 1)), 0, item.crackStages);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         tooltip.add(ChaosMod.TEXT.translate("item", "chaos_orb.leakage", (int) (100 * this.leakage)));
     }
 }

@@ -1,21 +1,21 @@
 package net.silentchaos512.gemschaos.item;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -37,7 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item.Properties;
 
 public class ChaosGemItem extends Item implements IGem {
     private static final String NBT_ENABLED = "Enabled";
@@ -62,7 +62,7 @@ public class ChaosGemItem extends Item implements IGem {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return new ICapabilityProvider() {
             @Nonnull
             @Override
@@ -85,12 +85,12 @@ public class ChaosGemItem extends Item implements IGem {
             return new HashMap<>();
         }
 
-        ListNBT tagList = stack.getOrCreateTag().getList(NBT_BUFF_LIST, 10);
+        ListTag tagList = stack.getOrCreateTag().getList(NBT_BUFF_LIST, 10);
         Map<IChaosBuff, Integer> map = new LinkedHashMap<>();
 
-        for (INBT nbt : tagList) {
-            if (nbt instanceof CompoundNBT) {
-                CompoundNBT tag = (CompoundNBT) nbt;
+        for (Tag nbt : tagList) {
+            if (nbt instanceof CompoundTag) {
+                CompoundTag tag = (CompoundTag) nbt;
                 String key = tag.getString(NBT_BUFF_KEY);
                 int level = tag.getInt(NBT_BUFF_LEVEL);
                 IChaosBuff buff = ChaosBuffManager.get(key);
@@ -122,17 +122,17 @@ public class ChaosGemItem extends Item implements IGem {
     public static void setBuffs(ItemStack stack, Map<IChaosBuff, Integer> buffs) {
         if (stack.isEmpty()) return;
 
-        CompoundNBT tag = stack.getOrCreateTag();
+        CompoundTag tag = stack.getOrCreateTag();
         if (tag.contains(NBT_BUFF_LIST)) {
             tag.remove(NBT_BUFF_LIST);
         }
 
-        ListNBT tagList = new ListNBT();
+        ListTag tagList = new ListTag();
 
         for (Map.Entry<IChaosBuff, Integer> entry : buffs.entrySet()) {
             IChaosBuff buff = entry.getKey();
             int level = entry.getValue();
-            CompoundNBT compound = new CompoundNBT();
+            CompoundTag compound = new CompoundTag();
             compound.putString(NBT_BUFF_KEY, buff.getId().toString());
             compound.putShort(NBT_BUFF_LEVEL, (short) level);
             tagList.add(compound);
@@ -173,7 +173,7 @@ public class ChaosGemItem extends Item implements IGem {
                 .sum();
     }
 
-    public static int getChaosGenerated(ItemStack stack, @Nullable PlayerEntity player) {
+    public static int getChaosGenerated(ItemStack stack, @Nullable Player player) {
         return getBuffs(stack).entrySet().stream()
                 .mapToInt(entry -> entry.getKey().getChaosGenerated(player, entry.getValue()))
                 .sum();
@@ -199,11 +199,11 @@ public class ChaosGemItem extends Item implements IGem {
         return buffMap.getOrDefault(buff, 0);
     }
 
-    public static void applyEffects(ItemStack stack, PlayerEntity player) {
+    public static void applyEffects(ItemStack stack, Player player) {
         getBuffs(stack).forEach((buff, level) -> buff.applyTo(player, level));
     }
 
-    public static void removeEffects(ItemStack stack, PlayerEntity player) {
+    public static void removeEffects(ItemStack stack, Player player) {
         getBuffs(stack).keySet().forEach(buff -> buff.removeFrom(player));
     }
 
@@ -220,9 +220,9 @@ public class ChaosGemItem extends Item implements IGem {
         if (pos.getWorld().isClientSide || !isEnabled(stack)) return;
 
         int totalChaos = 0;
-        AxisAlignedBB boundingBox = new AxisAlignedBB(pos.getPos()).inflate(PEDESTAL_RANGE);
-        List<PlayerEntity> players = pos.getWorld().getEntitiesOfClass(PlayerEntity.class, boundingBox);
-        for (PlayerEntity player : players) {
+        AABB boundingBox = new AABB(pos.getPos()).inflate(PEDESTAL_RANGE);
+        List<Player> players = pos.getWorld().getEntitiesOfClass(Player.class, boundingBox);
+        for (Player player : players) {
             applyEffects(stack, player);
             totalChaos += getChaosGenerated(stack, player);
         }
@@ -238,26 +238,26 @@ public class ChaosGemItem extends Item implements IGem {
     //region Item overrides
 
     @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
-        if (world.isClientSide || !(entity instanceof PlayerEntity)) return;
+    public void inventoryTick(ItemStack stack, Level world, Entity entity, int itemSlot, boolean isSelected) {
+        if (world.isClientSide || !(entity instanceof Player)) return;
 
         // Apply effects?
         if (isEnabled(stack)) {
-            PlayerEntity player = (PlayerEntity) entity;
+            Player player = (Player) entity;
             applyEffects(stack, player);
             ChaosApi.Chaos.generate(player, getChaosGenerated(stack, player), true);
         }
     }
 
     @Override
-    public boolean onDroppedByPlayer(ItemStack stack, PlayerEntity player) {
+    public boolean onDroppedByPlayer(ItemStack stack, Player player) {
         setEnabled(stack, false);
         removeEffects(stack, player);
         return true;
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
         if (!stack.isEmpty()) {
@@ -270,29 +270,29 @@ public class ChaosGemItem extends Item implements IGem {
             }
         }
 
-        return new ActionResult<>(ActionResultType.SUCCESS, stack);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         getBuffs(stack).forEach((buff, level) -> tooltip.add(buff.getDisplayName(level)));
         tooltip.add(ChaosMod.TEXT.translate("item", "chaos_gem.slots", getSlotsUsed(stack), MAX_SLOTS));
         tooltip.add(chaosGenTooltip("chaos", getChaosGenerated(stack, Minecraft.getInstance().player)));
         tooltip.add(chaosGenTooltip("chaosMax", getMaxChaosGenerated(stack)));
     }
 
-    private static ITextComponent chaosGenTooltip(String key, int chaos) {
+    private static Component chaosGenTooltip(String key, int chaos) {
         ChaosEmissionRate emissionRate = ChaosEmissionRate.fromAmount(chaos);
         return ChaosMod.TEXT.translate("item", "chaos_gem." + key, emissionRate.getDisplayName(chaos));
     }
 
     @Override
-    public ITextComponent getName(ItemStack stack) {
+    public Component getName(ItemStack stack) {
         return getDescription();
     }
 
     @Override
-    public ITextComponent getDescription() {
+    public Component getDescription() {
         return ChaosMod.TEXT.translate("item", "chaos_gem", this.gem.getDisplayName());
     }
 

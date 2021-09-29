@@ -1,7 +1,7 @@
 package net.silentchaos512.gemschaos.data.recipe;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.IFinishedRecipe;
+import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraftforge.common.Tags;
 import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.gemschaos.api.data.recipe.BlockCorruptingRecipeBuilder;
@@ -18,18 +18,18 @@ public class ChaosRecipeProvider extends LibRecipeProvider {
     }
 
     @Override
-    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
         registerOresAndCrystals(consumer);
         registerBlockCorrupting(consumer);
     }
 
-    private void registerOresAndCrystals(Consumer<IFinishedRecipe> consumer) {
+    private void registerOresAndCrystals(Consumer<FinishedRecipe> consumer) {
         smeltingAndBlastingRecipes(consumer, "chaos_crystal", ChaosBlocks.CHAOS_ORE, ChaosItems.CHAOS_CRYSTAL, 1.0f);
 
         compressionRecipes(consumer, ChaosBlocks.CHAOS_CRYSTAL_BLOCK, ChaosItems.CHAOS_CRYSTAL, null);
     }
 
-    private void registerBlockCorrupting(Consumer<IFinishedRecipe> consumer) {
+    private void registerBlockCorrupting(Consumer<FinishedRecipe> consumer) {
         BlockCorruptingRecipeBuilder.builder(Tags.Items.STONE, ChaosBlocks.CORRUPTED_STONE, 5_000).build(consumer);
         BlockCorruptingRecipeBuilder.builder(ChaosTags.Items.DIRT, ChaosBlocks.CORRUPTED_DIRT, 5_000).build(consumer);
     }

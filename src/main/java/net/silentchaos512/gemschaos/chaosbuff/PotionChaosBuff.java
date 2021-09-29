@@ -1,11 +1,11 @@
 package net.silentchaos512.gemschaos.chaosbuff;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.silentchaos512.gemschaos.ChaosMod;
 
@@ -17,12 +17,12 @@ public class PotionChaosBuff extends SimpleChaosBuff {
             SERIALIZER_ID,
             PotionChaosBuff::new,
             (buff, json) -> {
-                String str = JSONUtils.getAsString(json, "effect");
-                buff.effect = ForgeRegistries.POTIONS.getValue(new ResourceLocation(str));
-                buff.effectDuration = JSONUtils.getAsInt(json, "effectDuration", 50);
+                String str = GsonHelper.getAsString(json, "effect");
+                buff.effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(str));
+                buff.effectDuration = GsonHelper.getAsInt(json, "effectDuration", 50);
             },
             (buff, buffer) -> {
-                buff.effect = ForgeRegistries.POTIONS.getValue(buffer.readResourceLocation());
+                buff.effect = ForgeRegistries.MOB_EFFECTS.getValue(buffer.readResourceLocation());
                 buff.effectDuration = buffer.readVarInt();
             },
             (buff, buffer) -> {
@@ -31,26 +31,26 @@ public class PotionChaosBuff extends SimpleChaosBuff {
             }
     );
 
-    private Effect effect;
+    private MobEffect effect;
     private int effectDuration;
 
     public PotionChaosBuff(ResourceLocation id) {
         super(id);
     }
 
-    public Effect getEffect() {
+    public MobEffect getEffect() {
         return effect;
     }
 
     @Override
-    public void applyTo(PlayerEntity player, int level) {
-        if (this.effect == Effects.NIGHT_VISION || player.getEffect(this.effect) == null) {
-            player.addEffect(new EffectInstance(this.effect, this.effectDuration, level - 1, true, false));
+    public void applyTo(Player player, int level) {
+        if (this.effect == MobEffects.NIGHT_VISION || player.getEffect(this.effect) == null) {
+            player.addEffect(new MobEffectInstance(this.effect, this.effectDuration, level - 1, true, false));
         }
     }
 
     @Override
-    public void removeFrom(PlayerEntity player) {
+    public void removeFrom(Player player) {
         player.removeEffect(this.effect);
     }
 

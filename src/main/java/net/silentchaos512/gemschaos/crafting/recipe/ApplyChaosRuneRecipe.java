@@ -1,12 +1,12 @@
 package net.silentchaos512.gemschaos.crafting.recipe;
 
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.silentchaos512.gemschaos.chaosbuff.IChaosBuff;
 import net.silentchaos512.gemschaos.item.ChaosGemItem;
 import net.silentchaos512.gemschaos.item.ChaosRuneItem;
@@ -14,14 +14,14 @@ import net.silentchaos512.gemschaos.setup.ChaosRecipes;
 
 import java.util.List;
 
-public class ApplyChaosRuneRecipe extends SpecialRecipe {
+public class ApplyChaosRuneRecipe extends CustomRecipe {
     public ApplyChaosRuneRecipe(ResourceLocation idIn) {
         super(idIn);
     }
 
     @SuppressWarnings("ChainOfInstanceofChecks")
     @Override
-    public boolean matches(CraftingInventory inv, World worldIn) {
+    public boolean matches(CraftingContainer inv, Level worldIn) {
         int chaosGems = 0;
         int chaosRunes = 0;
         for (int i = 0; i < inv.getContainerSize(); ++i) {
@@ -42,7 +42,7 @@ public class ApplyChaosRuneRecipe extends SpecialRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInventory inv) {
+    public ItemStack assemble(CraftingContainer inv) {
         ItemStack chaosGem = ItemStack.EMPTY;
         List<ItemStack> runes = NonNullList.create();
 
@@ -82,7 +82,7 @@ public class ApplyChaosRuneRecipe extends SpecialRecipe {
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return ChaosRecipes.APPLY_CHAOS_RUNE.get();
     }
 }

@@ -1,9 +1,9 @@
 package net.silentchaos512.gemschaos.chaos;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,7 +32,7 @@ public final class ChaosHandler {
     @SubscribeEvent
     public static void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
         LivingEntity entity = event.getEntityLiving();
-        World world = entity.level;
+        Level world = entity.level;
         if (world.isClientSide) return;
 
         if (world.getGameTime() % 20 == 0) {
@@ -41,15 +41,15 @@ public final class ChaosHandler {
         }
     }
 
-    private static void entitySourceTick(Entity entity, World world, IChaosSource source) {
-        if (world.getGameTime() % 20 == 0 && entity instanceof PlayerEntity) {
+    private static void entitySourceTick(Entity entity, Level world, IChaosSource source) {
+        if (world.getGameTime() % 20 == 0 && entity instanceof Player) {
             // Add/subtract chaos to get closer to equilibrium point
             final int equilibrium = ChaosApi.Chaos.getEquilibriumPoint(world);
             final int rate = ChaosApi.Chaos.getDissipationRate(world);
             source.addChaos(source.getChaos() > equilibrium ? -rate : rate);
 
             // Try chaos events
-            ChaosEvents.tryChaosEvents((PlayerEntity) entity, world, source.getChaos());
+            ChaosEvents.tryChaosEvents((Player) entity, world, source.getChaos());
         }
     }
 }

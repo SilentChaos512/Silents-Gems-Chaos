@@ -1,6 +1,6 @@
 package net.silentchaos512.gemschaos.data;
 
-import net.minecraft.data.BlockTagsProvider;
+import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.silentchaos512.gemschaos.ChaosMod;

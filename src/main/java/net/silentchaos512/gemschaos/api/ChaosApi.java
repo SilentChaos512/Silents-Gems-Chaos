@@ -1,9 +1,9 @@
 package net.silentchaos512.gemschaos.api;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.silentchaos512.gemschaos.api.chaos.ChaosSourceCapability;
@@ -33,13 +33,13 @@ public class ChaosApi {
          * @param allowOrbs If true, chaos will first be sent to one chaos orb in the player's
          *                  inventory, with leakage spilling over to the player
          */
-        public static void generate(PlayerEntity player, int amount, boolean allowOrbs) {
+        public static void generate(Player player, int amount, boolean allowOrbs) {
             if (amount == 0) return;
 
             int amountLeft = amount;
             if (allowOrbs) {
                 // Chaos orbs absorb chaos, but put it all into the first we find
-                for (ItemStack stack : player.inventory.items) {
+                for (ItemStack stack : player.getInventory().items) {
                     if (!stack.isEmpty() && stack.getItem() instanceof ChaosOrbItem) {
                         amountLeft = ChaosOrbItem.absorbChaos(player, stack, amountLeft);
                         break;
@@ -64,7 +64,7 @@ public class ChaosApi {
         }
 
         @SuppressWarnings("TypeMayBeWeakened")
-        public static void dissipate(PlayerEntity player, int amount) {
+        public static void dissipate(Player player, int amount) {
             if (amount <= 0) {
                 return;
             }
@@ -78,11 +78,11 @@ public class ChaosApi {
          * @param world The world
          * @return The dissipation rate
          */
-        public static int getDissipationRate(World world) {
+        public static int getDissipationRate(Level world) {
             return DISSIPATION_SCALE;
         }
 
-        public static int getEquilibriumPoint(World world) {
+        public static int getEquilibriumPoint(Level world) {
             long time = world.getGameTime();
             return (int) (EQUILIBRIUM_BASE + EQUILIBRIUM_VARIATION * Math.cos(EQUILIBRIUM_CYCLE_CONSTANT * time));
         }

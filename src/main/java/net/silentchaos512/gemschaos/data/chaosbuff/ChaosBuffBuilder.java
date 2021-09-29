@@ -2,8 +2,8 @@ package net.silentchaos512.gemschaos.data.chaosbuff;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.silentchaos512.gemschaos.chaosbuff.IChaosBuffSerializer;
 import net.silentchaos512.gemschaos.chaosbuff.ICostCondition;
 
@@ -16,7 +16,7 @@ public class ChaosBuffBuilder {
     protected final int maxLevel;
     private final IChaosBuffSerializer<?> serializer;
 
-    protected ITextComponent displayName;
+    protected Component displayName;
     private int inactiveCost;
     private final List<Integer> activeCostByLevel = new ArrayList<>();
     private final List<Integer> slotsByLevel = new ArrayList<>();
@@ -48,7 +48,7 @@ public class ChaosBuffBuilder {
         return this;
     }
 
-    public ChaosBuffBuilder withDisplayName(ITextComponent displayName) {
+    public ChaosBuffBuilder withDisplayName(Component displayName) {
         this.displayName = displayName;
         return this;
     }
@@ -58,7 +58,7 @@ public class ChaosBuffBuilder {
 
         json.addProperty("type", serializer.getName().toString());
         json.addProperty("maxLevel", maxLevel);
-        json.add("displayName", ITextComponent.Serializer.toJsonTree(displayName));
+        json.add("displayName", Component.Serializer.toJsonTree(displayName));
 
         JsonArray slots = new JsonArray();
         slotsByLevel.forEach(slots::add);

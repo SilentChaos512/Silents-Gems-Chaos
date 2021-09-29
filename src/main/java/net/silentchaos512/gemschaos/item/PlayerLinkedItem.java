@@ -1,23 +1,23 @@
 package net.silentchaos512.gemschaos.item;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IEntityReader;
-import net.minecraft.world.World;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.EntityGetter;
+import net.minecraft.world.level.Level;
 import net.silentchaos512.gemschaos.ChaosMod;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item.Properties;
 
 public abstract class PlayerLinkedItem extends Item {
     private static final String NBT_PLAYER = "Player";
@@ -27,7 +27,7 @@ public abstract class PlayerLinkedItem extends Item {
     }
 
     @Nullable
-    public static PlayerEntity getOwner(ItemStack stack, IEntityReader world) {
+    public static Player getOwner(ItemStack stack, EntityGetter world) {
         UUID uuid = getOwnerUuid(stack);
         if (uuid != null) {
             return world.getPlayerByUUID(uuid);
@@ -43,16 +43,16 @@ public abstract class PlayerLinkedItem extends Item {
         return null;
     }
 
-    public static void setOwner(ItemStack stack, PlayerEntity player) {
+    public static void setOwner(ItemStack stack, Player player) {
         stack.getOrCreateTag().putUUID(NBT_PLAYER, player.getUUID());
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         UUID ownerUuid = getOwnerUuid(stack);
 
         if (worldIn != null) {
-            PlayerEntity owner = getOwner(stack, worldIn);
+            Player owner = getOwner(stack, worldIn);
 
             if (ownerUuid != null) {
                 tooltip.add(getOwnerText(ownerUuid, owner));
@@ -60,28 +60,28 @@ public abstract class PlayerLinkedItem extends Item {
         }
     }
 
-    private static ITextComponent getOwnerText(UUID ownerUuid, @Nullable PlayerEntity owner) {
-        ITextComponent text = owner != null
-                ? new StringTextComponent(owner.getScoreboardName()).withStyle(TextFormatting.GREEN)
-                : new StringTextComponent(ownerUuid.toString()).withStyle(TextFormatting.RED);
+    private static Component getOwnerText(UUID ownerUuid, @Nullable Player owner) {
+        Component text = owner != null
+                ? new TextComponent(owner.getScoreboardName()).withStyle(ChatFormatting.GREEN)
+                : new TextComponent(ownerUuid.toString()).withStyle(ChatFormatting.RED);
         return ChaosMod.TEXT.translate("item", "chaos_linker.owner", text);
     }
 
     @Override
-    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack stack = playerIn.getItemInHand(handIn);
         UUID ownerUuid = getOwnerUuid(stack);
 
         if (ownerUuid == null) {
             if (playerIn.isShiftKeyDown()) {
                 setOwner(stack, playerIn);
-                return ActionResult.success(stack);
+                return InteractionResultHolder.success(stack);
             } else {
                 playerIn.displayClientMessage(ChaosMod.TEXT.translate("item", "chaos_linker.notSneaking"), true);
-                return ActionResult.fail(stack);
+                return InteractionResultHolder.fail(stack);
             }
         }
 
-        return ActionResult.pass(stack);
+        return InteractionResultHolder.pass(stack);
     }
 }

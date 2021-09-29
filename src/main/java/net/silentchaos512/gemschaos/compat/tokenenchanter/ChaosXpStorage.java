@@ -1,9 +1,9 @@
 package net.silentchaos512.gemschaos.compat.tokenenchanter;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import net.silentchaos512.gemschaos.api.ChaosApi;
 import net.silentchaos512.gemschaos.item.PlayerLinkedItem;
 import net.silentchaos512.tokenenchanter.api.xp.XpStorageItemImpl;
@@ -33,7 +33,7 @@ public class ChaosXpStorage extends XpStorageItemImpl {
     @Override
     public void drainLevels(float amount) {
         if (amount > 0) {
-            PlayerEntity player = getOwnerByUuid(this.stack);
+            Player player = getOwnerByUuid(this.stack);
 
             if (player != null) {
                 ChaosApi.Chaos.generate(player, (int) (CHAOS_PER_LEVEL * amount), true);
@@ -42,7 +42,7 @@ public class ChaosXpStorage extends XpStorageItemImpl {
     }
 
     @Nullable
-    private static PlayerEntity getOwnerByUuid(ItemStack stack) {
+    private static Player getOwnerByUuid(ItemStack stack) {
         UUID uuid = PlayerLinkedItem.getOwnerUuid(stack);
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (uuid != null && server != null) {
