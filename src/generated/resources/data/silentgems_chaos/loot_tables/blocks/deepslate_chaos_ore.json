@@ -25,21 +25,33 @@
                   }
                 }
               ],
-              "name": "silentgems_chaos:corrupted_dirt"
+              "name": "silentgems_chaos:deepslate_chaos_ore"
             },
             {
               "type": "minecraft:item",
               "functions": [
                 {
                   "function": "minecraft:set_count",
-                  "count": 4.0,
+                  "count": {
+                    "type": "minecraft:uniform",
+                    "min": 3.0,
+                    "max": 4.0
+                  },
                   "add": false
+                },
+                {
+                  "function": "minecraft:apply_bonus",
+                  "enchantment": "minecraft:fortune",
+                  "formula": "minecraft:uniform_bonus_count",
+                  "parameters": {
+                    "bonusMultiplier": 1
+                  }
                 },
                 {
                   "function": "minecraft:explosion_decay"
                 }
               ],
-              "name": "silentgems_chaos:corrupted_dirt_pile"
+              "name": "silentgems_chaos:chaos_crystal"
             }
           ]
         }

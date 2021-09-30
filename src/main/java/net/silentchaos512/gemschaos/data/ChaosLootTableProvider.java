@@ -49,10 +49,8 @@ public class ChaosLootTableProvider extends LootTableProvider {
     private static final class BlockLootTables extends net.minecraft.data.loot.BlockLoot {
         @Override
         protected void addTables() {
-            this.add(ChaosBlocks.CHAOS_ORE.get(), block ->
-                    createSilkTouchDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(ChaosItems.CHAOS_CRYSTAL)
-                            .apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 4)))
-                            .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE)))));
+            add(ChaosBlocks.CHAOS_ORE.get(), BlockLootTables::chaosOreDrops);
+            add(ChaosBlocks.DEEPSLATE_CHAOS_ORE.get(), BlockLootTables::chaosOreDrops);
 
             dropSelf(ChaosBlocks.CHAOS_CRYSTAL_BLOCK.get());
 
@@ -60,6 +58,12 @@ public class ChaosLootTableProvider extends LootTableProvider {
                     createSingleItemTableWithSilkTouch(b, ChaosItems.CORRUPTED_STONE_PILE, ConstantValue.exactly(4)));
             add(ChaosBlocks.CORRUPTED_DIRT.get(), b ->
                     createSingleItemTableWithSilkTouch(b, ChaosItems.CORRUPTED_DIRT_PILE, ConstantValue.exactly(4)));
+        }
+
+        private static LootTable.Builder chaosOreDrops(Block block) {
+            return createSilkTouchDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(ChaosItems.CHAOS_CRYSTAL)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 4)))
+                    .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE))));
         }
 
         @Override
