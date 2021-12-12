@@ -7,7 +7,7 @@ import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.registries.RegistryObject;
 import net.silentchaos512.gems.util.Gems;
 import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.gemschaos.item.ChaosOrbItem;

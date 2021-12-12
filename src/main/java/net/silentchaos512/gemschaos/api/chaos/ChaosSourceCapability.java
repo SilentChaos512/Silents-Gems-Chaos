@@ -15,8 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ChaosSourceCapability implements IChaosSource, ICapabilitySerializable<CompoundTag> {
-    @CapabilityInject(IChaosSource.class)
-    public static Capability<IChaosSource> INSTANCE = null;
+    public static final Capability<IChaosSource> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
     public static ResourceLocation NAME = ChaosMod.getId("chaos_source");
 
     private static final String NBT_CHAOS = "Chaos";

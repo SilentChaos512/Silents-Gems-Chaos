@@ -13,7 +13,7 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.gemschaos.network.SyncChaosBuffsPacket;
 import org.apache.commons.io.IOUtils;

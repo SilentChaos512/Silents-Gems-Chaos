@@ -3,7 +3,7 @@ package net.silentchaos512.gemschaos.compat.tokenenchanter;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import net.silentchaos512.gemschaos.api.ChaosApi;
 import net.silentchaos512.gemschaos.item.PlayerLinkedItem;
 import net.silentchaos512.tokenenchanter.api.xp.XpStorageItemImpl;

@@ -36,7 +36,7 @@ public final class ChaosConfig {
             {
                 builder.comment("World generation settings. You must restart your game after changing these.",
                         "Changes will not be reflected in chunks that have already generated, only new ones.");
-                builder.push("world");
+                builder.push("world.18");
 
                 {
                     builder.comment("Settings for ores. Setting either vein count or vein size to zero (0) will stop that ore from generating.",
@@ -45,7 +45,7 @@ public final class ChaosConfig {
                     builder.push("ores");
 
                     chaosOres = new OreConfig(builder, "chaos",
-                            OreConfig.defaults(3, 9, 2, 6, 24));
+                            OreConfig.defaults(4, 11, 2, -90, 10, 0.5f));
 
                     builder.pop();
                 }

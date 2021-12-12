@@ -3,13 +3,13 @@ package net.silentchaos512.gemschaos.world;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
-import net.minecraft.world.level.levelgen.placement.ChanceDecoratorConfiguration;
-import net.minecraft.world.level.levelgen.placement.FeatureDecorator;
+import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -35,17 +35,23 @@ public final class ChaosWorldFeatures {
         if (configuredFeaturesRegistered) return;
         configuredFeaturesRegistered = true;
 
-        registerConfiguredFeature("chaos", ChaosConfig.Common.chaosOres.createConfiguredFeature(config -> {
-            ImmutableList<OreConfiguration.TargetBlockState> targetList = ImmutableList.of(
-                    OreConfiguration.target(OreConfiguration.Predicates.STONE_ORE_REPLACEABLES, ChaosBlocks.CHAOS_ORE.get().defaultBlockState()),
-                    OreConfiguration.target(OreConfiguration.Predicates.DEEPSLATE_ORE_REPLACEABLES, ChaosBlocks.DEEPSLATE_CHAOS_ORE.get().defaultBlockState()));
-            return Feature.ORE
-                    .configured(new OreConfiguration(targetList, config.getSize()))
-                    .rangeUniform(VerticalAnchor.aboveBottom(config.getMinHeight()), VerticalAnchor.absolute(config.getMaxHeight()))
-                    .decorated(FeatureDecorator.CHANCE.configured(new ChanceDecoratorConfiguration(config.getRarity())))
-                    .squared()
-                    .count(config.getCount());
-        }));
+        registerConfiguredFeature("chaos", ChaosConfig.Common.chaosOres.createConfiguredFeature(
+                config -> {
+                    ImmutableList<OreConfiguration.TargetBlockState> targetList = ImmutableList.of(
+                            OreConfiguration.target(OreFeatures.STONE_ORE_REPLACEABLES, ChaosBlocks.CHAOS_ORE.get().defaultBlockState()),
+                            OreConfiguration.target(OreFeatures.DEEPSLATE_ORE_REPLACEABLES, ChaosBlocks.DEEPSLATE_CHAOS_ORE.get().defaultBlockState()));
+                    return Feature.ORE.configured(new OreConfiguration(targetList, config.getSize(), config.getDiscardChanceOnAirExposure()));
+                },
+                (config, feature) -> {
+                    return feature.placed(
+                            CountPlacement.of(config.getCount()),
+                            RarityFilter.onAverageOnceEvery(config.getRarity()),
+                            HeightRangePlacement.triangle(VerticalAnchor.absolute(config.getMinHeight()), VerticalAnchor.absolute(config.getMaxHeight())),
+                            InSquarePlacement.spread(),
+                            BiomeFilter.biome()
+                    );
+                }
+        ));
     }
 
     private static void registerConfiguredFeature(String name, ConfiguredFeature<?, ?> configuredFeature) {
@@ -55,7 +61,7 @@ public final class ChaosWorldFeatures {
 
     private static void addOreFeature(BiomeLoadingEvent biome, OreConfig config) {
         if (config.isEnabled()) {
-            biome.getGeneration().addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, config.getConfiguredFeature());
+            biome.getGeneration().addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, config.getPlacedFeature());
         }
     }
 }

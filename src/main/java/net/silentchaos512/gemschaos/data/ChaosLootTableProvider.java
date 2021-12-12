@@ -17,7 +17,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.registries.RegistryObject;
 import net.silentchaos512.gemschaos.setup.ChaosBlocks;
 import net.silentchaos512.gemschaos.setup.ChaosItems;
 import net.silentchaos512.gemschaos.setup.ChaosRegistration;
