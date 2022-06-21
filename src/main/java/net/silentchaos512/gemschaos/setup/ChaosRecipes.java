@@ -14,13 +14,18 @@ import java.util.function.Supplier;
 
 public final class ChaosRecipes {
     public static final class Types {
-        public static final RecipeType<BlockCorruptingRecipe> BLOCK_CORRUPTING = register("block_corrupting");
-        public static final RecipeType<InfusingRecipe> INFUSING = register("infusing");
+        public static final RegistryObject<RecipeType<BlockCorruptingRecipe>> BLOCK_CORRUPTING = register("block_corrupting");
+        public static final RegistryObject<RecipeType<InfusingRecipe>> INFUSING = register("infusing");
 
         private Types() {}
 
-        private static <T extends Recipe<?>> RecipeType<T> register(String name) {
-            return RecipeType.register(ChaosMod.getId(name).toString());
+        private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> register(String name) {
+            return ChaosRegistration.RECIPE_TYPES.register(name, () -> new RecipeType<T>() {
+                @Override
+                public String toString() {
+                    return ChaosMod.MOD_ID + ":" + name;
+                }
+            });
         }
     }
 

@@ -155,7 +155,7 @@ dependencies {
 
     implementation fg.deobf("net.silentchaos512:silents-gems:${project.sgems_version}") {
         exclude module: 'forge'
-        exclude module: 'jei-1.18'
+        exclude module: 'jei-1.18.2'
         exclude module: 'silent-lib'
         exclude module: 'silent-gear'
         exclude module: 'token-enchanter'
@@ -163,7 +163,7 @@ dependencies {
     }
     implementation fg.deobf("net.silentchaos512:silent-gear:${project.sgear_version}") {
         exclude module: 'forge'
-        exclude module: 'jei-1.18'
+        exclude module: 'jei-1.18.2'
         exclude module: 'silent-lib'
         exclude module: 'curios-forge'
         exclude module: 'Patchouli'
@@ -172,12 +172,12 @@ dependencies {
     if (project.hasProperty('token_enchanter_version')) {
         compileOnly fg.deobf("net.silentchaos512:token-enchanter:${project.token_enchanter_version}:api") {
             exclude module: 'forge'
-            exclude module: 'jei-1.18'
+            exclude module: 'jei-1.18.2'
             exclude module: 'silent-lib'
         }
         runtimeOnly fg.deobf("net.silentchaos512:token-enchanter:${project.token_enchanter_version}") {
             exclude module: 'forge'
-            exclude module: 'jei-1.18'
+            exclude module: 'jei-1.18.2'
             exclude module: 'silent-lib'
         }
     }
@@ -227,7 +227,6 @@ curseforge {
             changelog = file(project.cf_changelog_filename)
             releaseType = project.cf_release_type
             addGameVersion(project.mc_version)
-            addGameVersion('1.18')
             mainArtifact(jar) {
                 relations {
                     requiredDependency 'silent-lib'

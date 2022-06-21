@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[38,)"
+loaderVersion="[40,)"
 license="MIT"
 issueTrackerURL="https://github.com/SilentChaos512/SilentGemsChaos/issues"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/silents-gems-chaos"
@@ -22,30 +22,30 @@ authors="SilentChaos512"
 [[dependencies.silentgems_chaos]]
     modId="forge"
     mandatory=true
-    versionRange="[38,)"
-    ordering="NONE"
+    versionRange="[40,)"
+    ordering="AFTER"
     side="BOTH"
 [[dependencies.silentgems_chaos]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18,1.19)"
-    ordering="NONE"
+    versionRange="[1.18.2,1.19)"
+    ordering="AFTER"
     side="BOTH"
 [[dependencies.silentgems_chaos]]
     modId="silentlib"
     mandatory=true
-    versionRange="[6,7)"
-    ordering = "NONE"
+    versionRange="[6.2,7)"
+    ordering = "AFTER"
     side = "BOTH"
 [[dependencies.silentgems_chaos]]
     modId="silentgems"
     mandatory=true
-    versionRange="[4,)"
+    versionRange="[4.3,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.silentgems_chaos]]
     modId="silentgear"
     mandatory=false
-    versionRange="[2.8,)"
+    versionRange="[2.10,)"
     ordering="AFTER"
     side="BOTH"

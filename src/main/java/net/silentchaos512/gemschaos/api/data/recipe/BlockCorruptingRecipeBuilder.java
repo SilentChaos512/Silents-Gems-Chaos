@@ -2,12 +2,12 @@ package net.silentchaos512.gemschaos.api.data.recipe;
 
 import com.google.gson.JsonObject;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.tags.Tag;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.ItemLike;
 import net.silentchaos512.gemschaos.setup.ChaosRecipes;
 import net.silentchaos512.lib.util.NameUtils;
 
@@ -29,7 +29,7 @@ public class BlockCorruptingRecipeBuilder {
         return new BlockCorruptingRecipeBuilder(Ingredient.of(block), result, chaosDissipated);
     }
 
-    public static BlockCorruptingRecipeBuilder builder(Tag<Item> itemTag, ItemLike result, int chaosDissipated) {
+    public static BlockCorruptingRecipeBuilder builder(TagKey<Item> itemTag, ItemLike result, int chaosDissipated) {
         return new BlockCorruptingRecipeBuilder(Ingredient.of(itemTag), result, chaosDissipated);
     }
 

@@ -1,6 +1,7 @@
 {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/silents-gems-chaos",
     "changelog": "https://github.com/SilentChaos512/SilentGemsChaos/blob/1.18.x/CHANGELOG.md",
+    "1.18.2": {},
     "1.18.1": {
         "0.3.0": "https://github.com/SilentChaos512/SilentGemsChaos/blob/1.18.x/CHANGELOG.md"
     },
