@@ -22,7 +22,7 @@ public class InfusingRecipe extends SingleItemRecipe {
     private int processTime = 200;
 
     public InfusingRecipe(ResourceLocation id, Ingredient ingredient, Ingredient catalyst, ItemStack result) {
-        super(ChaosRecipes.Types.INFUSING.get(), ChaosRecipes.INFUSING.get(), id, "", ingredient, result);
+        super(ChaosRecipes.INFUSING_TYPE.get(), ChaosRecipes.INFUSING.get(), id, "", ingredient, result);
         this.catalyst = catalyst;
     }
 

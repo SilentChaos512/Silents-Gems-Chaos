@@ -34,7 +34,7 @@ public class ChaosFlintAndSteelItem extends FlintAndSteelItem {
         BlockState blockstate = world.getBlockState(pos);
 
         Item blockItem = blockstate.getBlock().asItem();
-        BlockCorruptingRecipe recipe = world.getRecipeManager().getRecipeFor(ChaosRecipes.Types.BLOCK_CORRUPTING.get(), new SimpleContainer(new ItemStack(blockItem)), world).orElse(null);
+        BlockCorruptingRecipe recipe = world.getRecipeManager().getRecipeFor(ChaosRecipes.BLOCK_CORRUPTING_TYPE.get(), new SimpleContainer(new ItemStack(blockItem)), world).orElse(null);
 
         if (recipe != null) {
             world.playSound(player, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, world.getRandom().nextFloat() * 0.4F + 0.8F);

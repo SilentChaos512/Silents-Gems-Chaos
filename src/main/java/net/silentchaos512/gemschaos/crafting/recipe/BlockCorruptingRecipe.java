@@ -27,7 +27,7 @@ public class BlockCorruptingRecipe extends SingleItemRecipe {
     private int chaosDissipated = 1000;
 
     public BlockCorruptingRecipe(ResourceLocation id, Ingredient ingredient, ItemStack result) {
-        super(ChaosRecipes.Types.BLOCK_CORRUPTING.get(), ChaosRecipes.BLOCK_CORRUPTING.get(), id, "", ingredient, result);
+        super(ChaosRecipes.BLOCK_CORRUPTING_TYPE.get(), ChaosRecipes.BLOCK_CORRUPTING.get(), id, "", ingredient, result);
     }
 
     @Override
