@@ -7,6 +7,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -36,7 +37,10 @@ public class ChaosMod {
     public static final Logger LOGGER = LogManager.getLogger("Silent's Gems: Chaos");
     public static final TextUtil TEXT = new TextUtil(MOD_ID);
 
+    public static ChaosProxy PROXY;
+
     public ChaosMod() {
+        PROXY = DistExecutor.unsafeRunForDist(() -> ChaosProxy.Client::new, () -> ChaosProxy.Server::new);
         ChaosConfig.init();
         ChaosRegistration.register();
         ChaosNetwork.init();

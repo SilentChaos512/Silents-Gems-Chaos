@@ -277,7 +277,7 @@ public class ChaosGemItem extends Item implements IGem {
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         getBuffs(stack).forEach((buff, level) -> tooltip.add(buff.getDisplayName(level)));
         tooltip.add(ChaosMod.TEXT.translate("item", "chaos_gem.slots", getSlotsUsed(stack), MAX_SLOTS));
-        tooltip.add(chaosGenTooltip("chaos", getChaosGenerated(stack, Minecraft.getInstance().player)));
+        tooltip.add(chaosGenTooltip("chaos", getChaosGenerated(stack, ChaosMod.PROXY.getClientPlayer())));
         tooltip.add(chaosGenTooltip("chaosMax", getMaxChaosGenerated(stack)));
     }
 
