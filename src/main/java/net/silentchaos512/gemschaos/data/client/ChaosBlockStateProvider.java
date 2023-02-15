@@ -31,7 +31,7 @@ public class ChaosBlockStateProvider extends BlockStateProvider {
     }
 
     private void simpleBlock(Block block, String texture) {
-        String name = NameUtils.from(block).getPath();
+        String name = NameUtils.fromBlock(block).getPath();
         simpleBlock(block, models().cubeAll(name, modLoc(texture)));
     }
 }

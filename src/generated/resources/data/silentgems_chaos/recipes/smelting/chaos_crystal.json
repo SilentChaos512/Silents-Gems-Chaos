@@ -1,9 +1,9 @@
 {
   "type": "minecraft:smelting",
+  "cookingtime": 200,
+  "experience": 1.0,
   "ingredient": {
     "item": "silentgems_chaos:chaos_ore"
   },
-  "result": "silentgems_chaos:chaos_crystal",
-  "experience": 1.0,
-  "cookingtime": 200
+  "result": "silentgems_chaos:chaos_crystal"
 }

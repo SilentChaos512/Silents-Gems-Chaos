@@ -1,10 +1,10 @@
 package net.silentchaos512.gemschaos.data.chaosbuff;
 
 import com.google.gson.JsonObject;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.silentchaos512.gemschaos.chaosbuff.PotionChaosBuff;
-import net.silentchaos512.lib.util.NameUtils;
 
 public class PotionBuffBuilder extends ChaosBuffBuilder {
     private final MobEffect effect;
@@ -28,7 +28,7 @@ public class PotionBuffBuilder extends ChaosBuffBuilder {
     @Override
     public JsonObject serialize() {
         JsonObject json = super.serialize();
-        json.addProperty("effect", NameUtils.from(effect).toString());
+        json.addProperty("effect", ForgeRegistries.MOB_EFFECTS.getKey(effect).toString());
         if (effectDuration > 0) {
             json.addProperty("effectDuration", effectDuration);
         }

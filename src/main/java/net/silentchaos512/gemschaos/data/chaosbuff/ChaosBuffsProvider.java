@@ -1,25 +1,25 @@
 package net.silentchaos512.gemschaos.data.chaosbuff;
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.silentchaos512.gear.data.DataGenerators;
 import net.silentchaos512.gemschaos.chaosbuff.CostConditions;
-import net.silentchaos512.lib.util.NameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
+import java.util.Set;
 
 public class ChaosBuffsProvider implements DataProvider {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -103,7 +103,8 @@ public class ChaosBuffsProvider implements DataProvider {
     }
 
     private PotionBuffBuilder potion(MobEffect effect, int maxLevel) {
-        ResourceLocation effectId = NameUtils.from(effect);
+        ResourceLocation effectId = ForgeRegistries.MOB_EFFECTS.getKey(effect);
+        assert effectId != null;
         String path = effectId.getNamespace() + "." + effectId.getPath();
         return PotionBuffBuilder.builder(modId(path), maxLevel, effect);
     }
@@ -118,26 +119,27 @@ public class ChaosBuffsProvider implements DataProvider {
     }
 
     @Override
-    public void run(HashCache cache) {
+    public void run(CachedOutput cache) {
         Path outputFolder = this.generator.getOutputFolder();
+        Set<ResourceLocation> entries = Sets.newHashSet();
 
-        for (ChaosBuffBuilder builder : getBuilders()) {
-            try {
-                String jsonStr = GSON.toJson(builder.serialize());
-                String hashStr = SHA1.hashUnencodedChars(jsonStr).toString();
-                Path path = outputFolder.resolve(String.format("data/%s/silentgems_chaos_buffs/%s.json", builder.buffId.getNamespace(), builder.buffId.getPath()));
-                if (!Objects.equals(cache.getHash(outputFolder), hashStr) || !Files.exists(path)) {
-                    Files.createDirectories(path.getParent());
-
-                    try (BufferedWriter writer = Files.newBufferedWriter(path)) {
-                        writer.write(jsonStr);
-                    }
-                }
-
-                cache.putNew(path, hashStr);
-            } catch (IOException ex) {
-                LOGGER.error("Could not save chaos buffs to {}", outputFolder, ex);
+        //noinspection OverlyLongLambda
+        getBuilders().forEach(builder -> {
+            if (entries.contains(builder.buffId)) {
+                throw new IllegalStateException("Duplicate buff: " + builder.buffId);
             }
+
+            entries.add(builder.buffId);
+            Path path = outputFolder.resolve(String.format("data/%s/silentgems_chaos_buffs/%s.json", builder.buffId.getNamespace(), builder.buffId.getPath()));
+            trySaveStable(cache, builder, path);
+        });
+    }
+
+    private static void trySaveStable(CachedOutput cache, ChaosBuffBuilder builder, Path path) {
+        try {
+            DataGenerators.saveStable(cache, builder.serialize(), path);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
         }
     }
 }

@@ -26,14 +26,14 @@ public final class ChaosNetwork {
                 .loginIndex(LoginPacket::getLoginIndex, LoginPacket::setLoginIndex)
                 .decoder(buffer -> new LoginPacket.Reply())
                 .encoder((msg, buffer) -> {})
-                .consumer(HandshakeHandler.indexFirst((hh, msg, ctx) -> msg.handle(ctx)))
+                .consumerMainThread(HandshakeHandler.indexFirst((hh, msg, ctx) -> msg.handle(ctx)))
                 .add();
         channel.messageBuilder(SyncChaosBuffsPacket.class, 2)
                 .loginIndex(LoginPacket::getLoginIndex, LoginPacket::setLoginIndex)
                 .decoder(SyncChaosBuffsPacket::fromBytes)
                 .encoder(SyncChaosBuffsPacket::toBytes)
                 .markAsLoginPacket()
-                .consumer(HandshakeHandler.biConsumerFor((hh, msg, ctx) -> {
+                .consumerMainThread(HandshakeHandler.biConsumerFor((hh, msg, ctx) -> {
                     ChaosBuffManager.handlePacket(msg, ctx);
                     channel.reply(new LoginPacket.Reply(), ctx.get());
                 }))

@@ -1,14 +1,14 @@
 package net.silentchaos512.gemschaos.data.gear;
 
 import net.minecraft.data.DataGenerator;
-import net.silentchaos512.gear.data.material.MaterialBuilder;
-import net.silentchaos512.gear.data.material.MaterialsProvider;
+import net.silentchaos512.gear.api.data.material.MaterialBuilder;
+import net.silentchaos512.gear.api.data.material.MaterialsProviderBase;
 import net.silentchaos512.gemschaos.ChaosMod;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ChaosMaterialsProvider extends MaterialsProvider {
+public class ChaosMaterialsProvider extends MaterialsProviderBase {
     public ChaosMaterialsProvider(DataGenerator generator) {
         super(generator, ChaosMod.MOD_ID);
     }

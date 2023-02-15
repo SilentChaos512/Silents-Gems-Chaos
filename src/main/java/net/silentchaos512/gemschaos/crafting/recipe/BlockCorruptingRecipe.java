@@ -2,24 +2,23 @@ package net.silentchaos512.gemschaos.crafting.recipe;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SingleItemRecipe;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.silentchaos512.gemschaos.setup.ChaosRecipes;
 import net.silentchaos512.lib.util.NameUtils;
 
@@ -81,7 +80,7 @@ public class BlockCorruptingRecipe extends SingleItemRecipe {
         return true;
     }
 
-    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<BlockCorruptingRecipe> {
+    public static class Serializer implements RecipeSerializer<BlockCorruptingRecipe> {
         @Override
         public BlockCorruptingRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
             Ingredient ingredient = Ingredient.fromJson(json.get("ingredient"));
@@ -91,7 +90,7 @@ public class BlockCorruptingRecipe extends SingleItemRecipe {
             if (item == null) {
                 throw new JsonParseException("Unknown item: " + itemId);
             } else if (!(item instanceof BlockItem)) {
-                throw new JsonParseException("Item '" + NameUtils.from(item) + "' is not a block item!");
+                throw new JsonParseException("Item '" + NameUtils.fromItem(item) + "' is not a block item!");
             }
             ItemStack resultStack = new ItemStack(item);
 

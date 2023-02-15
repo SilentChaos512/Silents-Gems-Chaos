@@ -1,27 +1,24 @@
 package net.silentchaos512.gemschaos.item;
 
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.stats.Stats;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.Util;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.silentchaos512.gemschaos.ChaosMod;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
-import net.minecraft.world.item.Item.Properties;
 
 public class ChaosOrbItem extends Item {
     public static final ResourceLocation CRACK_STAGE = ChaosMod.getId("crack_stage");
@@ -74,7 +71,7 @@ public class ChaosOrbItem extends Item {
         int crackStage = getCrackStage(stack);
 
         // Absorb chaos amount minus leakage, destroy if durability depleted
-        if (stack.hurt(toAbsorb, ChaosMod.RANDOM, null)) {
+        if (stack.hurt(toAbsorb, ChaosMod.RANDOM_SOURCE, null)) {
             destroyOrb(world, pos, stack);
         }
 
@@ -94,7 +91,7 @@ public class ChaosOrbItem extends Item {
     }
 
     private static void notifyOrbCracked(LivingEntity entity, ItemStack stack) {
-        entity.sendMessage(ChaosMod.TEXT.translate("item", "chaos_orb.crack", stack.getHoverName()), Util.NIL_UUID);
+        entity.sendSystemMessage(ChaosMod.TEXT.translate("item", "chaos_orb.crack", stack.getHoverName()));
         playCrackSound(entity.level, entity.blockPosition());
     }
 
@@ -110,7 +107,7 @@ public class ChaosOrbItem extends Item {
 
         int pieceCount = entity.getRandom().nextInt(99000) + 1000;
         String piecesFormatted = String.format("%,d", pieceCount);
-        entity.sendMessage(ChaosMod.TEXT.translate("item", "chaos_orb.break", displayName, piecesFormatted), Util.NIL_UUID);
+        entity.sendSystemMessage(ChaosMod.TEXT.translate("item", "chaos_orb.break", displayName, piecesFormatted));
     }
 
     private static void destroyOrb(LevelAccessor world, BlockPos pos, ItemStack stack) {

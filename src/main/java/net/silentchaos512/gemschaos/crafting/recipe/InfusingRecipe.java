@@ -13,7 +13,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SingleItemRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.silentchaos512.gemschaos.setup.ChaosRecipes;
 
 public class InfusingRecipe extends SingleItemRecipe {
@@ -62,7 +61,7 @@ public class InfusingRecipe extends SingleItemRecipe {
         return true;
     }
 
-    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<InfusingRecipe> {
+    public static class Serializer implements RecipeSerializer<InfusingRecipe> {
         @Override
         public InfusingRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
             Ingredient ingredient = Ingredient.fromJson(json.get("ingredient"));

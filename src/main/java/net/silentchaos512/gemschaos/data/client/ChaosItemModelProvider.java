@@ -51,7 +51,7 @@ public class ChaosItemModelProvider extends ItemModelProvider {
     }
 
     private void blockBuilder(Block block) {
-        String name = NameUtils.from(block).getPath();
+        String name = NameUtils.fromBlock(block).getPath();
         withExistingParent(name, modLoc("block/" + name));
     }
 
@@ -67,7 +67,7 @@ public class ChaosItemModelProvider extends ItemModelProvider {
     }
 
     private void chaosOrb(@SuppressWarnings("TypeMayBeWeakened") ChaosOrbItem item, String... crackTextures) {
-        String name = NameUtils.from(item).getPath();
+        String name = NameUtils.fromItem(item).getPath();
         ModelFile.ExistingModelFile itemGenerated = getExistingFile(mcLoc("item/generated"));
 
         for (int i = 0; i < crackTextures.length; ++i) {

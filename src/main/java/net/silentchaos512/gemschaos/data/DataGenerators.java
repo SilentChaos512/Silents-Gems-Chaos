@@ -2,9 +2,9 @@ package net.silentchaos512.gemschaos.data;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.gemschaos.data.chaosbuff.ChaosBuffsProvider;
 import net.silentchaos512.gemschaos.data.client.ChaosBlockStateProvider;
@@ -23,18 +23,20 @@ public final class DataGenerators {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
         ChaosBlockTagsProvider blockTags = new ChaosBlockTagsProvider(gen, existingFileHelper);
-        gen.addProvider(blockTags);
-        gen.addProvider(new ChaosItemTagsProvider(gen, blockTags, existingFileHelper));
-        gen.addProvider(new ChaosRecipeProvider(gen));
-        gen.addProvider(new ChaosLootTableProvider(gen));
-//        gen.addProvider(new GemsAdvancementProvider(gen));
+        gen.addProvider(true, blockTags);
+        gen.addProvider(true, new ChaosItemTagsProvider(gen, blockTags, existingFileHelper));
+        gen.addProvider(true, new ChaosRecipeProvider(gen));
+        gen.addProvider(true, new ChaosLootTableProvider(gen));
+//        gen.addProvider(true, new GemsAdvancementProvider(gen));
 
-        gen.addProvider(new ChaosTraitsProvider(gen));
-        gen.addProvider(new ChaosMaterialsProvider(gen));
+        gen.addProvider(false, new ChaosTraitsProvider(gen));
+        gen.addProvider(false, new ChaosMaterialsProvider(gen));
 
-        gen.addProvider(new ChaosBuffsProvider(gen, ChaosMod.MOD_ID));
+        gen.addProvider(true, new ChaosBuffsProvider(gen, ChaosMod.MOD_ID));
 
-        gen.addProvider(new ChaosBlockStateProvider(gen, existingFileHelper));
-        gen.addProvider(new ChaosItemModelProvider(gen, existingFileHelper));
+        gen.addProvider(true, new ChaosBlockStateProvider(gen, existingFileHelper));
+        gen.addProvider(true, new ChaosItemModelProvider(gen, existingFileHelper));
+
+        ChaosWorldGen.init(gen, existingFileHelper);
     }
 }

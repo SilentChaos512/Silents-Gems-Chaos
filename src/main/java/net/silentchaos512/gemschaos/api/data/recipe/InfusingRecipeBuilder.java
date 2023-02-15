@@ -31,7 +31,7 @@ public class InfusingRecipeBuilder {
     }
 
     public void build(Consumer<FinishedRecipe> consumer) {
-        ResourceLocation itemId = NameUtils.from(this.result);
+        ResourceLocation itemId = NameUtils.fromItem(this.result);
         build(consumer, new ResourceLocation(itemId.getNamespace(), "chaos_infusing/" + itemId.getPath()));
     }
 
@@ -54,7 +54,7 @@ public class InfusingRecipeBuilder {
             json.addProperty("processTime", processTime);
             json.add("ingredient", ingredient.toJson());
             json.add("catalyst", catalyst.toJson());
-            json.addProperty("result", NameUtils.from(result).toString());
+            json.addProperty("result", NameUtils.fromItem(result).toString());
             json.addProperty("count", count);
         }
 

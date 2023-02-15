@@ -4,13 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.silentchaos512.gemschaos.ChaosMod;
 import net.silentchaos512.utils.Color;
 import net.silentchaos512.utils.EnumUtils;
@@ -86,7 +85,7 @@ public class SimpleChaosBuff implements IChaosBuff {
         }
         return displayName.copy()
                 .append(" ")
-                .append(new TranslatableComponent("enchantment.level." + level));
+                .append(Component.translatable("enchantment.level." + level));
     }
 
     @Override

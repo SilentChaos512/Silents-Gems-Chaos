@@ -1,15 +1,16 @@
 package net.silentchaos512.gemschaos.setup;
 
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -88,8 +89,8 @@ public final class ChaosBlocks {
     private static Block getChaosOre(final BlockBehaviour.Properties properties) {
         return new Block(properties) {
             @Override
-            public int getExpDrop(BlockState state, LevelReader world, BlockPos pos, int fortune, int silkTouch) {
-                return silkTouch == 0 ? Mth.nextInt(RANDOM, 2, 7) : 0;
+            public int getExpDrop(BlockState state, LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
+                return silkTouchLevel == 0 ? Mth.nextInt(randomSource, 2, 7) : 0;
             }
         };
     }

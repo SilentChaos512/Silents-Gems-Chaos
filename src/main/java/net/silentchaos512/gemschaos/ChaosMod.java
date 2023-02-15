@@ -1,6 +1,7 @@
 package net.silentchaos512.gemschaos;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,6 +35,7 @@ public class ChaosMod {
     public static final String MOD_ID = "silentgems_chaos";
 
     public static final Random RANDOM = new Random();
+    public static final RandomSource RANDOM_SOURCE = RandomSource.create();
     public static final Logger LOGGER = LogManager.getLogger("Silent's Gems: Chaos");
     public static final TextUtil TEXT = new TextUtil(MOD_ID);
 

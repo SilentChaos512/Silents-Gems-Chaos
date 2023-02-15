@@ -38,7 +38,7 @@ public class BlockCorruptingRecipeBuilder {
     }
 
     public void build(Consumer<FinishedRecipe> consumer) {
-        ResourceLocation itemId = NameUtils.from(this.result);
+        ResourceLocation itemId = NameUtils.fromItem(this.result);
         build(consumer, new ResourceLocation(itemId.getNamespace(), "block_corrupting/" + itemId.getPath()));
     }
 
@@ -59,7 +59,7 @@ public class BlockCorruptingRecipeBuilder {
         public void serializeRecipeData(JsonObject json) {
             json.addProperty("chaosDissipated", chaosDissipated);
             json.add("ingredient", ingredient.toJson());
-            json.addProperty("result", NameUtils.from(result).toString());
+            json.addProperty("result", NameUtils.fromItem(result).toString());
         }
 
         @Override

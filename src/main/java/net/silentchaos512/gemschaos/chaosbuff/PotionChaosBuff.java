@@ -26,7 +26,7 @@ public class PotionChaosBuff extends SimpleChaosBuff {
                 buff.effectDuration = buffer.readVarInt();
             },
             (buff, buffer) -> {
-                buffer.writeResourceLocation(Objects.requireNonNull(buff.effect.getRegistryName()));
+                buffer.writeResourceLocation(Objects.requireNonNull(ForgeRegistries.MOB_EFFECTS.getKey(buff.effect)));
                 buffer.writeVarInt(buff.effectDuration);
             }
     );
